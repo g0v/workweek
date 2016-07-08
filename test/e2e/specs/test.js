@@ -9,6 +9,6 @@ module.exports = {
       .assert.elementPresent('.logo')
       .assert.containsText('h1', 'Hello World!')
       .assert.elementCount('p', 3)
-      .end()
+      .end();
   }
-}
+};
