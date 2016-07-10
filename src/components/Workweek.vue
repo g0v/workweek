@@ -103,7 +103,7 @@
               額外補休時數：{{ (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0) }} 日
             </li>
             <li class="warning" v-show="workhours[6] > 0 || workhours[5] > 0">
-              只有在天災、事變或突發事件才可在週日工作。
+              只有在天災、事變或突發事件才可在例假日（如週六、週日）工作。
             </li>
           </template>
           <li class="warning" v-show="totalWorkHours > 48">
