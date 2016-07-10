@@ -32,18 +32,13 @@
       <div class="col-md-4">
         <h3>勞基法現行版本</h3>
         <ul>
-          <template v-if="totalWorkHours <= 48">
-            <li>週薪：{{regularPay}} 元</li>
-            <li>加班費：{{currentSolution.overtimePay}} 元</li>
-            <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
-            <li>工時：{{totalWorkHours}}</li>
-            <li v-if="workhours[6] > 0" class="warning">額外補休時數：1 日</li>
-            <li class="warning" v-show="workhours[6] > 0">
-              只有在天災、事變或突發事件才可在週日工作。
-            </li>
-          </template>
-          <li class="warning" v-show="totalWorkHours > 48">
-            違法：目前總工時為 {{totalWorkHours}} 小時，超過 48 小時
+          <li>週薪：{{regularPay}} 元</li>
+          <li>加班費：{{currentSolution.overtimePay}} 元</li>
+          <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
+          <li>工時：{{totalWorkHours}}</li>
+          <li v-if="workhours[6] > 0" class="warning">額外補休時數：1 日</li>
+          <li class="warning" v-show="workhours[6] > 0">
+            只有在天災、事變或突發事件才可在週日工作。
           </li>
         </ul>
         <table class="week">
@@ -70,18 +65,13 @@
       <div class="col-md-4">
         <h3>勞動部草案一例一休版本</h3>
         <ul>
-          <template v-if="totalWorkHours <= 48">
-            <li>週薪：{{regularPay}} 元</li>
-            <li>加班費：{{oneRestOneOffSolution.overtimePay}} 元</li>
-            <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
-            <li>工時：{{totalWorkHours}}</li>
-            <li v-if="workhours[6] > 0" class="warning">額外補休時數：1 日</li>
-            <li class="warning" v-show="workhours[6] > 0">
-              只有在天災、事變或突發事件才可在週日工作。
-            </li>
-          </template>
-          <li class="warning" v-show="totalWorkHours > 48">
-            違法：目前總工時為 {{totalWorkHours}} 小時，超過 48 小時
+          <li>週薪：{{regularPay}} 元</li>
+          <li>加班費：{{oneRestOneOffSolution.overtimePay}} 元</li>
+          <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
+          <li>工時：{{totalWorkHours}}</li>
+          <li v-if="workhours[6] > 0" class="warning">額外補休時數：1 日</li>
+          <li class="warning" v-show="workhours[6] > 0">
+            只有在天災、事變或突發事件才可在週日工作。
           </li>
         </ul>
         <table class="week">
@@ -111,20 +101,15 @@
       <div class="col-md-4">
         <h3>一週兩例假日版本</h3>
         <ul>
-          <template v-if="totalWorkHours <= 48">
-            <li>週薪：{{regularPay}} 元</li>
-            <li>加班費：{{twoOffSolution.overtimePay}} 元</li>
-            <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
-            <li>工時：{{totalWorkHours}}</li>
-            <li v-if="workhours[6] > 0 || workhours[5] > 0" class="warning">
-              額外補休時數：{{ (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0) }} 日
-            </li>
-            <li class="warning" v-show="workhours[6] > 0 || workhours[5] > 0">
-              只有在天災、事變或突發事件才可在例假日（如週六、週日）工作。
-            </li>
-          </template>
-          <li class="warning" v-show="totalWorkHours > 48">
-            違法：目前總工時為 {{totalWorkHours}} 小時，超過 48 小時
+          <li>週薪：{{regularPay}} 元</li>
+          <li>加班費：{{twoOffSolution.overtimePay}} 元</li>
+          <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
+          <li>工時：{{totalWorkHours}}</li>
+          <li v-if="workhours[6] > 0 || workhours[5] > 0" class="warning">
+            額外補休時數：{{ (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0) }} 日
+          </li>
+          <li class="warning" v-show="workhours[6] > 0 || workhours[5] > 0">
+            只有在天災、事變或突發事件才可在例假日（如週六、週日）工作。
           </li>
         </ul>
         <table class="week">
