@@ -3,14 +3,20 @@
     <div class="container">
       <h1><span class="glyphicon glyphicon-wrench"></span> 勞基法計算機</h1>
       <p>
-        沒人搞的清楚這次修法到底要怎麼修比較好，不如來個計算機自己按一按吧。
+        沒人搞的清楚這次修法正確的計算方式，不如來個計算機自己按一按吧。
       </p>
     </div>
   </div>
   <div class="container">
     <div class="alert alert-info">
       <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-      <span>假設勞工採月薪制，其月薪 {{monthlyPay}} 元，平均時薪 {{hourlyPay}} 元</span>
+      <span>
+        前置條件：
+        <ul>
+          <li>假設勞工採月薪制，其月薪 {{monthlyPay}} 元，平均時薪 {{hourlyPay}} 元</li>
+          <li>現行勞基法與一例一休的例假日假設為週日，兩例的例假日為週六與週日</li>
+        </ul>
+      </span>
     </div>
     <h2>每日工時</h2>
     <div class="input">
@@ -54,10 +60,12 @@
             </td>
           </tr>
         </table>
-        潛規則：
-        <ul>
-          <li>台(87)勞動二字第39675號函：例假日（通常是週日）上班低於八個小時，薪水均為 {{hourlyPay}} x 8</li>
-        </ul>
+        <div class="alert alert-info">
+          相關規定：
+          <ul>
+            <li>台(87)勞動二字第39675號函：例假日（通常是週日）上班低於八個小時，薪水均為 {{hourlyPay}} x 8</li>
+          </ul>
+        </div>
       </div>
       <div class="col-md-4">
         <h3>勞動部草案一例一休版本</h3>
@@ -90,6 +98,15 @@
             </td>
           </tr>
         </table>
+        <div class="alert alert-info">
+          相關規則：
+          <ul>
+            <li>
+              根據 <a href="http://www.cna.com.tw/news/firstnews/201606290106-1.aspx" target="_blank">報導</a>，休息日工資計算的部分，擬從原本的加倍發給，改為在2小時以內者，按平日工資額另給予每小時1又1/3，再繼續工作者另給予每小時1又2/3。
+            </li>
+            <li>工作時間計算方式為工作4小時以內，以4小時計算，超過4小時至8小時，以8小時計算，超過8小時至12小時以內者，以12小時計。</li>
+          </ul>
+        </div>
       </div>
       <div class="col-md-4">
         <h3>一週兩例假日版本</h3>
