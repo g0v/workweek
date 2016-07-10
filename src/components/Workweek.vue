@@ -1,11 +1,19 @@
 <template>
-  <p>假設勞工月薪 {{monthlyPay}} 元，時薪 {{hourlyPay}} 元</p>
+  <p>假設勞工採月薪制，其月薪 {{monthlyPay}} 元，平均時薪 {{hourlyPay}} 元</p>
   <p>
     <ul>
-      <li>週薪：{{normalPay}} 元</li>
-      <li>加班費：{{overtimePay}} 元</li>
-      <li>總計週薪：{{normalPay+overtimePay}} 元</li>
-      <li>額外補休時數：{{workhours[6]}} 小時</li>
+      <template v-if="totalWorkHours <= 48">
+        <li>週薪：{{regularPay}} 元</li>
+        <li>加班費：{{overtimePay}} 元</li>
+        <li>總計週薪：{{totalPay}} 元</li>
+        <li>額外補休時數：{{workhours[6]}} 小時</li>
+        <li class="warning" v-show="workhours[6] > 0">
+          只有在天災、事變或突發事件才可在週日工作。
+        </li>
+      </template>
+      <li class="warning" v-show="totalWorkHours > 48">
+        違法：目前總工時為 {{totalWorkHours}} 小時，超過 48 小時
+      </li>
     </ul>
   </p>
   <div class="input">
@@ -21,12 +29,13 @@
       <th v-for="name in daynames">
         {{ name }}
       <th>
-      <tr v-for="hour in status">
-        <td v-for="day in hour.days"
-            v-bind:class="day">
-            <span v-if="day.work">😃</span>
-            <span v-if="day.overtime">😡</span>
-            <span v-if="!day.work && !day.overtime">--</span>
+      <tr v-for="hour in workingMatrix">
+        <td v-for="day in hour" track-by="$index">
+            <span class="emoji" v-if="day === 1">😃</span>
+            <span class="emoji" v-if="day === 2">😨</span>
+            <span class="emoji" v-if="day === 3">😱</span>
+            <span class="emoji" v-if="day === 4">😡</span>
+            <span class="emoji" v-if="day === 0">--</span>
         </td>
       </tr>
     </table>
@@ -34,6 +43,14 @@
 </template>
 
 <script>
+const state = {
+  OFF: 0,
+  REGULAR_WORK: 1,
+  OVER_TWO_HOURS_WORK: 2,
+  OVER_THREE_HOURS_WORK: 3,
+  DAYOFF_WORK: 4
+};
+
 export default {
   data () {
     let daynames = ['一', '二', '三', '四', '五', '六', '日'];
@@ -42,68 +59,73 @@ export default {
     return {
       daynames: daynames,
       workhours: workhours,
+      regularPay: 150 * 8 * 7,
       hourlyPay: 150,
-      monthlyPay: 36000
+      monthlyPay: 36000,
+      regularHoursPerDay: 8
     };
   },
   computed: {
-    status: function () {
-      let status = [];
-      let workhours = this.workhours.slice();
-      let expectedWorkhours = [ 8, 8, 8, 8, 8, 0, 0 ];
-      for (let i = 0; i < 12; i++) {
-        let hour = {
-          days: Array.apply(null, Array(7)).map((val, j) => {
-            expectedWorkhours[j]--;
-            workhours[j]--;
-            return {
-              work: workhours[j] >= 0 && expectedWorkhours[j] >= 0,
-              overtime: workhours[j] >= 0 && expectedWorkhours[j] < 0
-            };
-          })
-        };
-        status.push(hour);
-      }
-      return status;
-    },
-    normalPay: function () {
-      let pay = 0;
-      this.workhours.forEach((workhour, i) => {
-        if (workhour > 8) {
-          workhour = 8;
-        }
+    workingMatrix: function () {
+      let workingMatrix = [];
+      let total = 0;
+      this.workhours.forEach((workhour, dayOfWeek) => {
+        let workday = Array.apply(null, Array(12)).map((val, i) => {
+          let currentState = state.OFF;
 
-        if (i === 6) {
-          workhour = 0;
-        }
+          if (workhour > i) {
+            total++;
+          }
 
-        pay += workhour * 150;
+          if (workhour <= i) {
+            currentState = state.OFF;
+          } else if (dayOfWeek === 6) {
+            currentState = state.DAYOFF_WORK;
+          } else if (total > 42) {
+            currentState = state.OVER_THREE_HOURS_WORK;
+          } else if (total > 40) {
+            currentState = state.OVER_TWO_HOURS_WORK;
+          } else if (i < this.regularHoursPerDay) {
+            currentState = state.REGULAR_WORK;
+          } else if (i - this.regularHoursPerDay >= 2) {
+            currentState = state.OVER_THREE_HOURS_WORK;
+          } else if (i - this.regularHoursPerDay < 2) {
+            currentState = state.OVER_TWO_HOURS_WORK;
+          } else {
+            currentState = state.OFF;
+          }
+
+          return currentState;
+        });
+        workingMatrix.push(workday);
       });
-      return pay;
+      var transposed = workingMatrix[0].map(function (col, i) {
+        return workingMatrix.map(function (row) {
+          return row[i];
+        });
+      });
+      return transposed;
     },
     overtimePay: function () {
       let pay = 0;
-      this.workhours.forEach((workhour, i) => {
-        let overtimeHour = workhour - 8;
-        if (i < 5 && overtimeHour > 0) {
-          if (overtimeHour <= 2) {
-            pay += overtimeHour * 150 * 4 / 3;
-          } else {
-            let moreTwo = overtimeHour - 2;
-            pay += (moreTwo * 5 / 3 + 2 * 4 / 3) * 150;
+      this.workingMatrix.forEach(day => {
+        day.forEach(hour => {
+          if (hour === 2) {
+            pay += this.hourlyPay * 4 / 3;
+          } else if (hour === 3) {
+            pay += this.hourlyPay * 5 / 3;
+          } else if (hour === 4) {
+            pay += this.hourlyPay * 2;
           }
-        } else if (i === 6) {
-          pay += workhour * 2 * 150;
-        } else if (i === 5) {
-          if (workhour <= 2) {
-            pay += workhour * 150 * 4 / 3;
-          } else {
-            let moreTwo = workhour - 2;
-            pay += (moreTwo * 5 / 3 + 2 * 4 / 3) * 150;
-          }
-        }
+        });
       });
       return pay;
+    },
+    totalPay: function () {
+      return this.overtimePay + this.regularPay;
+    },
+    totalWorkHours: function () {
+      return this.workhours.reduce((a, b) => parseInt(a) + parseInt(b));
     }
   }
 };
@@ -126,5 +148,12 @@ td.work {
 }
 td.overtime {
   background-color: red;
+}
+span.emoji {
+  font-size: 30px;
+}
+.warning {
+  color: red;
+  font-weight: bold;
 }
 </style>
