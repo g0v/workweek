@@ -125,7 +125,8 @@ export default {
       return this.overtimePay + this.regularPay;
     },
     totalWorkHours: function () {
-      return this.workhours.reduce((a, b) => parseInt(a) + parseInt(b));
+      return this.workhours.reduce((a, b) =>
+              parseInt(a) || 0 + parseInt(b) || 0);
     }
   }
 };
