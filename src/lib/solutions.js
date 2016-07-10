@@ -181,7 +181,84 @@ function oneRestOneOff (workhours, hourlyPay) {
   };
 }
 
-function twoOff (workhours, hourlyPay) {}
+function twoOff (workhours, hourlyPay) {
+  let workingMatrix = [];
+  let total = 0;
+  let overtimeHours = 0;
+
+  workhours.forEach((workhour, dayOfWeek) => {
+    let workday = Array.apply(null, Array(12)).map((val, i) => {
+      let currentState = STATE.OFF;
+
+      if (workhour > i) {
+        total++;
+      }
+
+      if (workhour <= i) {
+        currentState = STATE.OFF;
+      } else if (dayOfWeek === 5 || dayOfWeek === 6) {
+        currentState = STATE.DAYOFF_WORK;
+      } else if (total - overtimeHours > 42) {
+        currentState = STATE.OVER_THREE_HOURS_WORK;
+        overtimeHours++;
+      } else if (total - overtimeHours > 40) {
+        currentState = STATE.OVER_TWO_HOURS_WORK;
+        overtimeHours++;
+      } else if (i < REGULAR_HOURS_PER_DAY) {
+        currentState = STATE.REGULAR_WORK;
+      } else if (i - REGULAR_HOURS_PER_DAY >= 2) {
+        currentState = STATE.OVER_THREE_HOURS_WORK;
+        overtimeHours++;
+      } else if (i - REGULAR_HOURS_PER_DAY < 2) {
+        currentState = STATE.OVER_TWO_HOURS_WORK;
+        overtimeHours++;
+      } else {
+        currentState = STATE.OFF;
+      }
+
+      return currentState;
+    });
+    workingMatrix.push(workday);
+  });
+  var transposed = workingMatrix[0].map(function (col, i) {
+    return workingMatrix.map(function (row) {
+      return row[i];
+    });
+  });
+
+  let pay = 0;
+  workingMatrix.forEach(day => {
+    day.forEach(hour => {
+      if (hour === 2) {
+        pay += hourlyPay * 4 / 3;
+      } else if (hour === 3) {
+        pay += hourlyPay * 5 / 3;
+      }
+    });
+  });
+
+  // 週六與週日工作的薪資規則
+  // 例假日工作八個小時以內，薪水皆以 150 * 8 計算
+  // 超過八個小時的前兩個小時，薪水以 150 * 4 / 3 * n 計算
+  // 超國十小時，薪水以 150 * 5 / 3 * n 計算
+  [5, 6].forEach(day => {
+    if (workhours[day] > 0 && workhours[day] <= 8) {
+      pay += hourlyPay * 8;
+    } else if (workhours[day] - 10 > 0) {
+      pay += (workhours[day] - 10) * 150 * 5 / 3 +
+              2 * 150 * 4 / 3 +
+              hourlyPay * 8;
+    } else if (workhours[day] - 8 > 0) {
+      pay += (workhours[day] - 8) * 150 * 4 / 3 + hourlyPay * 8;
+    }
+  });
+
+  return {
+    workingMatrix: workingMatrix,
+    transposed: transposed,
+    overtimePay: pay
+  };
+}
 
 export {
   REGULAR_HOURS_PER_DAY,

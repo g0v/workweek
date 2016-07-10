@@ -43,6 +43,7 @@
   <ul>
     <li>台(87)勞動二字第39675號函：例假日（通常是週日）上班低於八個小時，薪水均為 {{hourlyPay}} x 8</li>
   </ul>
+
   <h2>勞動部草案一例一休版本</h2>
   <ul>
     <template v-if="totalWorkHours <= 48">
@@ -64,6 +65,39 @@
       {{ name }}
     <th>
     <tr v-for="hour in oneRestOneOffSolution.transposed">
+      <td v-for="day in hour" track-by="$index">
+          <span class="emoji" v-if="day === 1">😃</span>
+          <span class="emoji" v-if="day === 2">😨</span>
+          <span class="emoji" v-if="day === 3">😱</span>
+          <span class="emoji" v-if="day === 4">😡</span>
+          <span class="emoji" v-if="day === 0">--</span>
+      </td>
+    </tr>
+  </table>
+
+  <h2>一週兩例假日版本（假設是週六與週日）</h2>
+  <ul>
+    <template v-if="totalWorkHours <= 48">
+      <li>週薪：{{regularPay}} 元</li>
+      <li>加班費：{{twoOffSolution.overtimePay}} 元</li>
+      <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
+      <li>工時：{{totalWorkHours}}</li>
+      <li v-if="workhours[6] > 0 || workhours[5] > 0" class="warning">
+        額外補休時數：{{ (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0) }} 日
+      </li>
+      <li class="warning" v-show="workhours[6] > 0 || workhours[5] > 0">
+        只有在天災、事變或突發事件才可在週日工作。
+      </li>
+    </template>
+    <li class="warning" v-show="totalWorkHours > 48">
+      違法：目前總工時為 {{totalWorkHours}} 小時，超過 48 小時
+    </li>
+  </ul>
+  <table class="week">
+    <th v-for="name in daynames">
+      {{ name }}
+    <th>
+    <tr v-for="hour in twoOffSolution.transposed">
       <td v-for="day in hour" track-by="$index">
           <span class="emoji" v-if="day === 1">😃</span>
           <span class="emoji" v-if="day === 2">😨</span>
@@ -97,6 +131,9 @@ export default {
     },
     oneRestOneOffSolution: function () {
       return solutions.oneRestOneOff(this.workhours, this.hourlyPay);
+    },
+    twoOffSolution: function () {
+      return solutions.twoOff(this.workhours, this.hourlyPay);
     },
     totalWorkHours: function () {
       return this.workhours.reduce((a, b) =>
