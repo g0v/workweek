@@ -6,7 +6,8 @@
         <li>週薪：{{regularPay}} 元</li>
         <li>加班費：{{overtimePay}} 元</li>
         <li>總計週薪：{{totalPay}} 元</li>
-        <li>額外補休時數：{{workhours[6]}} 小時</li>
+        <li>工時：{{totalWorkHours}}</li>
+        <li v-if="workhours[6] > 0" class="warning">額外補休時數：1 日</li>
         <li class="warning" v-show="workhours[6] > 0">
           只有在天災、事變或突發事件才可在週日工作。
         </li>
@@ -69,6 +70,7 @@ export default {
     workingMatrix: function () {
       let workingMatrix = [];
       let total = 0;
+      let overtimeHours = 0;
       this.workhours.forEach((workhour, dayOfWeek) => {
         let workday = Array.apply(null, Array(12)).map((val, i) => {
           let currentState = state.OFF;
@@ -81,16 +83,20 @@ export default {
             currentState = state.OFF;
           } else if (dayOfWeek === 6) {
             currentState = state.DAYOFF_WORK;
-          } else if (total > 42) {
+          } else if (total - overtimeHours > 42) {
             currentState = state.OVER_THREE_HOURS_WORK;
-          } else if (total > 40) {
+            overtimeHours++;
+          } else if (total - overtimeHours > 40) {
             currentState = state.OVER_TWO_HOURS_WORK;
+            overtimeHours++;
           } else if (i < this.regularHoursPerDay) {
             currentState = state.REGULAR_WORK;
           } else if (i - this.regularHoursPerDay >= 2) {
             currentState = state.OVER_THREE_HOURS_WORK;
+            overtimeHours++;
           } else if (i - this.regularHoursPerDay < 2) {
             currentState = state.OVER_TWO_HOURS_WORK;
+            overtimeHours++;
           } else {
             currentState = state.OFF;
           }
@@ -126,7 +132,7 @@ export default {
     },
     totalWorkHours: function () {
       return this.workhours.reduce((a, b) =>
-              parseInt(a) || 0 + parseInt(b) || 0);
+              (parseInt(a) || 0) + (parseInt(b) || 0));
     }
   }
 };
