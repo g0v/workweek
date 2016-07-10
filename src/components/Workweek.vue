@@ -18,13 +18,13 @@
     </ul>
   </p>
   <div class="input">
-    <label>週一 <input v-model="workhours[0]"></label>
-    <label>週二 <input v-model="workhours[1]"></label>
-    <label>週三 <input v-model="workhours[2]"></label>
-    <label>週四 <input v-model="workhours[3]"></label>
-    <label>週五 <input v-model="workhours[4]"></label>
-    <label>週六 <input v-model="workhours[5]"></label>
-    <label>週日 <input v-model="workhours[6]"></label>
+    <label>週一 <input number v-model="workhours[0]"></label>
+    <label>週二 <input number v-model="workhours[1]"></label>
+    <label>週三 <input number v-model="workhours[2]"></label>
+    <label>週四 <input number v-model="workhours[3]"></label>
+    <label>週五 <input number v-model="workhours[4]"></label>
+    <label>週六 <input number v-model="workhours[5]"></label>
+    <label>週日 <input number v-model="workhours[6]"></label>
 
     <table class="week">
       <th v-for="name in daynames">
@@ -121,7 +121,7 @@ export default {
           } else if (hour === 3) {
             pay += this.hourlyPay * 5 / 3;
           } else if (hour === 4) {
-            pay += this.hourlyPay * 2;
+            pay += this.hourlyPay;
           }
         });
       });
@@ -162,5 +162,8 @@ span.emoji {
 .warning {
   color: red;
   font-weight: bold;
+}
+label {
+  display: block;
 }
 </style>
