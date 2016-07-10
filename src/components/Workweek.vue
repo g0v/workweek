@@ -1,6 +1,5 @@
 <template>
   <p>假設勞工採月薪制，其月薪 {{monthlyPay}} 元，平均時薪 {{hourlyPay}} 元</p>
-  <p>
     <ul>
       <template v-if="totalWorkHours <= 48">
         <li>週薪：{{regularPay}} 元</li>
@@ -16,7 +15,6 @@
         違法：目前總工時為 {{totalWorkHours}} 小時，超過 48 小時
       </li>
     </ul>
-  </p>
   <div class="input">
     <label>週一 <input number v-model="workhours[0]"></label>
     <label>週二 <input number v-model="workhours[1]"></label>
@@ -25,22 +23,25 @@
     <label>週五 <input number v-model="workhours[4]"></label>
     <label>週六 <input number v-model="workhours[5]"></label>
     <label>週日 <input number v-model="workhours[6]"></label>
-
-    <table class="week">
-      <th v-for="name in daynames">
-        {{ name }}
-      <th>
-      <tr v-for="hour in workingMatrix">
-        <td v-for="day in hour" track-by="$index">
-            <span class="emoji" v-if="day === 1">😃</span>
-            <span class="emoji" v-if="day === 2">😨</span>
-            <span class="emoji" v-if="day === 3">😱</span>
-            <span class="emoji" v-if="day === 4">😡</span>
-            <span class="emoji" v-if="day === 0">--</span>
-        </td>
-      </tr>
-    </table>
   </div>
+  <table class="week">
+    <th v-for="name in daynames">
+      {{ name }}
+    <th>
+    <tr v-for="hour in workingMatrix">
+      <td v-for="day in hour" track-by="$index">
+          <span class="emoji" v-if="day === 1">😃</span>
+          <span class="emoji" v-if="day === 2">😨</span>
+          <span class="emoji" v-if="day === 3">😱</span>
+          <span class="emoji" v-if="day === 4">😡</span>
+          <span class="emoji" v-if="day === 0">--</span>
+      </td>
+    </tr>
+  </table>
+  潛規則：
+  <ul>
+    <li>台(87)勞動二字第39675號函：例假日（通常是週日）上班低於八個小時，薪水均為 {{hourlyPay}} x 8</li>
+  </ul>
 </template>
 
 <script>
@@ -120,11 +121,24 @@ export default {
             pay += this.hourlyPay * 4 / 3;
           } else if (hour === 3) {
             pay += this.hourlyPay * 5 / 3;
-          } else if (hour === 4) {
-            pay += this.hourlyPay;
           }
         });
       });
+
+      // 週日工作的薪資規則，為什麼搞得這麼複雜？
+      // 例假日工作八個小時以內，薪水皆以 150 * 8 計算
+      // 超過八個小時的前兩個小時，薪水以 150 * 4 / 3 * n 計算
+      // 超國十小時，薪水以 150 * 5 / 3 * n 計算
+      if (this.workhours[6] > 0 && this.workhours[6] <= 8) {
+        pay += this.hourlyPay * 8;
+      } else if (this.workhours[6] - 10 > 0) {
+        pay += (this.workhours[6] - 10) * 150 * 5 / 3 +
+                2 * 150 * 4 / 3 +
+                this.hourlyPay * 8;
+      } else if (this.workhours[6] - 8 > 0) {
+        pay += (this.workhours[6] - 8) * 150 * 4 / 3 + this.hourlyPay * 8;
+      }
+
       return pay;
     },
     totalPay: function () {
