@@ -131,11 +131,12 @@ function oneRestOneOff (workhours, hourlyPay) {
   });
 
   let pay = 0;
-  workingMatrix.forEach(day => {
-    day.forEach((hour, i) => {
-      if (i === 5) {
-        return;
-      }
+  workingMatrix.forEach((day, i) => {
+    if (i === 5) {
+      return;
+    }
+
+    day.forEach(hour => {
       if (hour === 2) {
         pay += hourlyPay * 4 / 3;
       } else if (hour === 3) {

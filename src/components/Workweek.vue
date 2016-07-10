@@ -124,9 +124,6 @@ td.work {
 td.overtime {
   background-color: red;
 }
-span.emoji {
-  font-size: 30px;
-}
 .warning {
   color: red;
   font-weight: bold;
