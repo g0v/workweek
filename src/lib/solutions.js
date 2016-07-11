@@ -25,6 +25,12 @@ function current (workhours, hourlyPay) {
         currentState = STATE.OFF;
       } else if (dayOfWeek === 6) {
         currentState = STATE.DAYOFF_WORK;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY >= 2) {
+        currentState = STATE.OVER_TWO_HOURS_WORK;
+        overtimeHours++;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY < 2) {
+        currentState = STATE.OVERTIME_WORK;
+        overtimeHours++;
       } else if (total - overtimeHours > 42) {
         currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
@@ -124,6 +130,12 @@ function oneRestOneOff (workhours, hourlyPay) {
         currentState = STATE.OFF;
       } else if (dayOfWeek === 6) {
         currentState = STATE.DAYOFF_WORK;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY >= 2) {
+        currentState = STATE.OVER_TWO_HOURS_WORK;
+        overtimeHours++;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY < 2) {
+        currentState = STATE.OVERTIME_WORK;
+        overtimeHours++;
       } else if (total - overtimeHours > 42) {
         currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
@@ -220,6 +232,12 @@ function twoOff (workhours, hourlyPay) {
         currentState = STATE.OFF;
       } else if (dayOfWeek === 5 || dayOfWeek === 6) {
         currentState = STATE.DAYOFF_WORK;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY >= 2) {
+        currentState = STATE.OVER_TWO_HOURS_WORK;
+        overtimeHours++;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY < 2) {
+        currentState = STATE.OVERTIME_WORK;
+        overtimeHours++;
       } else if (total - overtimeHours > 42) {
         currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
