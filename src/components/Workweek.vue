@@ -47,11 +47,14 @@
           <th>
           <tr v-for="hour in currentSolution.transposed">
             <td v-for="day in hour" track-by="$index">
-                <span class="emoji" v-if="day === 1">😃</span>
-                <span class="emoji" v-if="day === 2">😨</span>
-                <span class="emoji" v-if="day === 3">😱</span>
-                <span class="emoji" v-if="day === 4">😡</span>
-                <span class="emoji" v-if="day === 0">--</span>
+              <span v-if="day !== 0" class="emoji" v-bind:class="{
+                'regular': day === 1,
+                'overtime': day === 2,
+                'overtime-two-hours': day === 3,
+                'work-on-dayoff': day === 4,
+                'off': day === 0
+              }"></span>
+              <span class="emoji" v-if="day === 0">--</span>
             </td>
           </tr>
         </table>
@@ -80,11 +83,14 @@
           <th>
           <tr v-for="hour in oneRestOneOffSolution.transposed">
             <td v-for="day in hour" track-by="$index">
-                <span class="emoji" v-if="day === 1">😃</span>
-                <span class="emoji" v-if="day === 2">😨</span>
-                <span class="emoji" v-if="day === 3">😱</span>
-                <span class="emoji" v-if="day === 4">😡</span>
-                <span class="emoji" v-if="day === 0">--</span>
+              <span v-if="day !== 0" class="emoji" v-bind:class="{
+                'regular': day === 1,
+                'overtime': day === 2,
+                'overtime-two-hours': day === 3,
+                'work-on-dayoff': day === 4,
+                'off': day === 0
+              }"></span>
+              <span class="emoji" v-if="day === 0">--</span>
             </td>
           </tr>
         </table>
@@ -118,11 +124,14 @@
           <th>
           <tr v-for="hour in twoOffSolution.transposed">
             <td v-for="day in hour" track-by="$index">
-                <span class="emoji" v-if="day === 1">😃</span>
-                <span class="emoji" v-if="day === 2">😨</span>
-                <span class="emoji" v-if="day === 3">😱</span>
-                <span class="emoji" v-if="day === 4">😡</span>
-                <span class="emoji" v-if="day === 0">--</span>
+              <span v-if="day !== 0" class="emoji" v-bind:class="{
+                'regular': day === 1,
+                'overtime': day === 2,
+                'overtime-two-hours': day === 3,
+                'work-on-dayoff': day === 4,
+                'off': day === 0
+              }"></span>
+              <span class="emoji" v-if="day === 0">--</span>
             </td>
           </tr>
         </table>
@@ -182,6 +191,32 @@ table.week td, table.week th {
 .warning {
   color: red;
   font-weight: bold;
+}
+
+.emoji {
+  width: 25px;
+  height: 25px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: block;
+  margin: auto;
+}
+
+.emoji.regular {
+  background-image: url('../assets/regular.png');
+}
+
+.emoji.overtime {
+  background-image: url('../assets/overtime.png');
+}
+
+.emoji.overtime-two-hours {
+  background-image: url('../assets/overtime-two-hours.png');
+}
+
+.emoji.work-on-dayoff {
+  background-image: url('../assets/dayoff.png');
 }
 
 .footer {
