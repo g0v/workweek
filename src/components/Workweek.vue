@@ -1,9 +1,9 @@
 <template>
   <div class="jumbotron">
     <div class="container">
-      <h1><span class="glyphicon glyphicon-wrench"></span> [尚未完工] 勞基法計算機</h1>
+      <h1><span class="glyphicon glyphicon-wrench"></span>勞基法計算機</h1>
       <p>
-        沒人搞的清楚這次修法正確的計算方式，不如來個計算機自己按一按吧。
+        沒人搞得清楚這次修法正確的計算方式，不如來個計算機自己按一按吧。
       </p>
     </div>
   </div>
@@ -14,6 +14,9 @@
         前置條件：
         <ul>
           <li>現行勞基法與一例一休的例假日假設為週日，兩例的例假日為週六與週日</li>
+          <li>現行勞基法的週六假設為約定不用上班的日子</li>
+          <li>一例一休的休息日假設為星期六</li>
+          <li>基於以上假設，在計算輪班制度時（例如四班二輪）可能會與實際狀況有誤差</li>
         </ul>
       </span>
     </div>
