@@ -65,17 +65,17 @@ function current (workhours, hourlyPay) {
   });
 
   // 週日工作的薪資規則，為什麼搞得這麼複雜？
-  // 例假日工作八個小時以內，薪水皆以 150 * 8 計算
-  // 超過八個小時的前兩個小時，薪水以 150 * 4 / 3 * n 計算
-  // 超國十小時，薪水以 150 * 5 / 3 * n 計算
+  // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
+  // 超過八個小時的前兩個小時，薪水以 hourlyPay * 4 / 3 * n 計算
+  // 超過十小時，薪水以 hourlyPay * 5 / 3 * n 計算
   if (workhours[6] > 0 && workhours[6] <= 8) {
     pay += hourlyPay * 8;
   } else if (workhours[6] - 10 > 0) {
-    pay += (workhours[6] - 10) * 150 * 5 / 3 +
-            2 * 150 * 4 / 3 +
+    pay += (workhours[6] - 10) * hourlyPay * 5 / 3 +
+            2 * hourlyPay * 4 / 3 +
             hourlyPay * 8;
   } else if (workhours[6] - 8 > 0) {
-    pay += (workhours[6] - 8) * 150 * 4 / 3 + hourlyPay * 8;
+    pay += (workhours[6] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
   }
 
   return {
@@ -152,26 +152,26 @@ function oneRestOneOff (workhours, hourlyPay) {
 
   if (workhours[5] > 0) {
     if (workhours[5] <= 4) {
-      pay += hourlyPay * 2 * 7 / 3 + hourlyPay * 2 * 8 / 3;
+      pay += hourlyPay * 2 * 4 / 3 + hourlyPay * 2 * 5 / 3;
     } else if (workhours[5] <= 8) {
-      pay += hourlyPay * 2 * 7 / 3 + hourlyPay * 6 * 8 / 3;
+      pay += hourlyPay * 2 * 4 / 3 + hourlyPay * 6 * 5 / 3;
     } else {
-      pay += hourlyPay * 2 * 7 / 3 + hourlyPay * 10 * 8 / 3;
+      pay += hourlyPay * 2 * 4 / 3 + hourlyPay * 10 * 5 / 3;
     }
   }
 
   // 週日工作的薪資規則，為什麼搞得這麼複雜？
-  // 例假日工作八個小時以內，薪水皆以 150 * 8 計算
-  // 超過八個小時的前兩個小時，薪水以 150 * 4 / 3 * n 計算
-  // 超國十小時，薪水以 150 * 5 / 3 * n 計算
+  // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
+  // 超過八個小時的前兩個小時，薪水以 hourlyPay * 4 / 3 * n 計算
+  // 超過十小時，薪水以 hourlyPay * 5 / 3 * n 計算
   if (workhours[6] > 0 && workhours[6] <= 8) {
     pay += hourlyPay * 8;
   } else if (workhours[6] - 10 > 0) {
-    pay += (workhours[6] - 10) * 150 * 5 / 3 +
-            2 * 150 * 4 / 3 +
+    pay += (workhours[6] - 10) * hourlyPay * 5 / 3 +
+            2 * hourlyPay * 4 / 3 +
             hourlyPay * 8;
   } else if (workhours[6] - 8 > 0) {
-    pay += (workhours[6] - 8) * 150 * 4 / 3 + hourlyPay * 8;
+    pay += (workhours[6] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
   }
 
   return {
@@ -238,18 +238,18 @@ function twoOff (workhours, hourlyPay) {
   });
 
   // 週六與週日工作的薪資規則
-  // 例假日工作八個小時以內，薪水皆以 150 * 8 計算
-  // 超過八個小時的前兩個小時，薪水以 150 * 4 / 3 * n 計算
-  // 超國十小時，薪水以 150 * 5 / 3 * n 計算
+  // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
+  // 超過八個小時的前兩個小時，薪水以 hourlyPay * 4 / 3 * n 計算
+  // 超過十小時，薪水以 hourlyPay * 5 / 3 * n 計算
   [5, 6].forEach(day => {
     if (workhours[day] > 0 && workhours[day] <= 8) {
       pay += hourlyPay * 8;
     } else if (workhours[day] - 10 > 0) {
-      pay += (workhours[day] - 10) * 150 * 5 / 3 +
-              2 * 150 * 4 / 3 +
+      pay += (workhours[day] - 10) * hourlyPay * 5 / 3 +
+              2 * hourlyPay * 4 / 3 +
               hourlyPay * 8;
     } else if (workhours[day] - 8 > 0) {
-      pay += (workhours[day] - 8) * 150 * 4 / 3 + hourlyPay * 8;
+      pay += (workhours[day] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
     }
   });
 
