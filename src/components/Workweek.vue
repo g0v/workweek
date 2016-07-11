@@ -139,6 +139,12 @@
             </td>
           </tr>
         </table>
+        <div class="alert alert-info">
+          相關規則：
+          <ul>
+            <li>國民黨版在立法說明提到比照公務員，兩例有可能實質變兩休，但目前草案並沒有這個效果，還要觀察是否有後續動作</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
