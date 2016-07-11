@@ -54,7 +54,11 @@ function current (workhours, hourlyPay) {
   });
 
   let pay = 0;
-  workingMatrix.forEach(day => {
+  workingMatrix.forEach((day, i) => {
+    if (i === 5) {
+      return;
+    }
+
     day.forEach(hour => {
       if (hour === 2) {
         pay += hourlyPay * 4 / 3;
@@ -63,6 +67,24 @@ function current (workhours, hourlyPay) {
       }
     });
   });
+
+  // 週六工作的薪資規則
+  // 前兩個小時，時薪為 1/3
+  // 2 ~ 8 小時，時薪為 2/3
+  // 超過第八個小時，時薪為 1 + 2/3
+
+  if (workhours[5] > 0) {
+    let hours = workhours[5];
+
+    if (hours <= 2) {
+      pay += hours * hourlyPay * 1 / 3;
+    } else if (hours <= 8) {
+      pay += 2 * hourlyPay * 1 / 3 + (hours - 2) * hourlyPay * 2 / 3;
+    } else if (hours > 8) {
+      pay += 2 * hourlyPay * 1 / 3 + 6 * hourlyPay * 2 / 3 +
+             (hours - 8) * hourlyPay * 5 / 3;
+    }
+  }
 
   // 週日工作的薪資規則，為什麼搞得這麼複雜？
   // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
