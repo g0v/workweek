@@ -13,20 +13,20 @@
       <span>
         前置條件：
         <ul>
-          <li>假設勞工採月薪制，其月薪 {{monthlyPay}} 元，平均時薪 {{hourlyPay}} 元</li>
           <li>現行勞基法與一例一休的例假日假設為週日，兩例的例假日為週六與週日</li>
         </ul>
       </span>
     </div>
     <h2>每日工時</h2>
+    <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay}} 元</p>
     <div class="input">
-      <label>週一 <input number v-model="workhours[0]"></label>
-      <label>週二 <input number v-model="workhours[1]"></label>
-      <label>週三 <input number v-model="workhours[2]"></label>
-      <label>週四 <input number v-model="workhours[3]"></label>
-      <label>週五 <input number v-model="workhours[4]"></label>
-      <label>週六 <input number v-model="workhours[5]"></label>
-      <label>週日 <input number v-model="workhours[6]"></label>
+      <label>週一 <input number class="workhours" v-model="workhours[0]"></label>
+      <label>週二 <input number class="workhours" v-model="workhours[1]"></label>
+      <label>週三 <input number class="workhours" v-model="workhours[2]"></label>
+      <label>週四 <input number class="workhours" v-model="workhours[3]"></label>
+      <label>週五 <input number class="workhours" v-model="workhours[4]"></label>
+      <label>週六 <input number class="workhours" v-model="workhours[5]"></label>
+      <label>週日 <input number class="workhours" v-model="workhours[6]"></label>
     </div>
     <div class="row">
       <div class="col-md-4">
@@ -154,13 +154,18 @@ export default {
     return {
       daynames: solutions.DAY_NAMES,
       workhours: workhours,
-      regularPay: 150 * 8 * 7,
-      hourlyPay: 150,
+      assumingWorkHours: 240,
       monthlyPay: 36000,
       regularHoursPerDay: solutions.REGULAR_HOURS_PER_DAY
     };
   },
   computed: {
+    hourlyPay: function () {
+      return parseInt(this.monthlyPay / this.assumingWorkHours);
+    },
+    regularPay: function () {
+      return this.hourlyPay * 8 * 7;
+    },
     currentSolution: function () {
       return solutions.current(this.workhours, this.hourlyPay);
     },
@@ -225,4 +230,21 @@ table.week td, table.week th {
   background: #EEE;
   text-align: center;
 }
+
+.monthly-pay {
+  width: 80px;
+  text-align: center;
+}
+
+.assuming-work-hours {
+  width: 50px;
+  text-align: center;
+}
+
+input.workhours {
+  width: 50px;
+  text-align: center;
+  margin-right: 20px;
+}
+
 </style>

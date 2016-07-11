@@ -103,7 +103,7 @@ function current (workhours, hourlyPay) {
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: pay
+    overtimePay: parseInt(pay)
   };
 }
 
@@ -199,7 +199,7 @@ function oneRestOneOff (workhours, hourlyPay) {
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: pay
+    overtimePay: parseInt(pay)
   };
 }
 
@@ -278,7 +278,7 @@ function twoOff (workhours, hourlyPay) {
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: pay
+    overtimePay: parseInt(pay)
   };
 }
 
