@@ -149,7 +149,7 @@
     </div>
   </div>
   <div class="footer">
-    本專案源碼於 <a href="https://github.com/g0v/workweek">g0v/worweek</a> 以 MIT 授權釋出，
+    本專案源碼於 <a href="https://github.com/g0v/workweek">g0v/workweek</a> 以 MIT 授權釋出，
     有任何問題請提交至 <a href="https://github.com/g0v/workweek/issues">issue tracker</a>
   </div>
 </template>
