@@ -1,7 +1,7 @@
 <template>
   <div class="jumbotron">
     <div class="container">
-      <h1><span class="glyphicon glyphicon-wrench"></span> 勞基法計算機</h1>
+      <h1><span class="glyphicon glyphicon-wrench"></span> [尚未完工] 勞基法計算機</h1>
       <p>
         沒人搞的清楚這次修法正確的計算方式，不如來個計算機自己按一按吧。
       </p>
