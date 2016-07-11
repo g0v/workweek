@@ -13,6 +13,7 @@
       <span>
         前置條件：
         <ul>
+          <li><a target="_blank" href="http://laws.mol.gov.tw/Chi/FLAW/FLAWDOC03.asp?keyword=&lc1=FL014930%2C+20150701%2C+24&sdate=&edate=&datatype=etype&recordNo=7">勞動 2 字第 0960130677 號 函</a>：原約定月薪給付總額相當於 240 小時者（即「平日每小時工資額」係以月薪總額除以 30 再除以 8 核計者）</li>
           <li>現行勞基法與一例一休的例假日假設為週日，兩例的例假日為週六與週日</li>
           <li>現行勞基法的週六假設為約定不用上班的日子</li>
           <li>一例一休的休息日假設為星期六</li>
