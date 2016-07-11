@@ -23,13 +23,13 @@
     <h2>每日工時</h2>
     <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay}} 元</p>
     <div class="input">
-      <label>週一 <input type="number" min="0" max="24" class="workhours" v-model="workhours[0]"></label>
-      <label>週二 <input type="number" min="0" max="24" class="workhours" v-model="workhours[1]"></label>
-      <label>週三 <input type="number" min="0" max="24" class="workhours" v-model="workhours[2]"></label>
-      <label>週四 <input type="number" min="0" max="24" class="workhours" v-model="workhours[3]"></label>
-      <label>週五 <input type="number" min="0" max="24" class="workhours" v-model="workhours[4]"></label>
-      <label>週六 <input type="number" min="0" max="24" class="workhours" v-model="workhours[5]"></label>
-      <label>週日 <input type="number" min="0" max="24" class="workhours" v-model="workhours[6]"></label>
+      <label>週一 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[0]"></label>
+      <label>週二 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[1]"></label>
+      <label>週三 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[2]"></label>
+      <label>週四 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[3]"></label>
+      <label>週五 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[4]"></label>
+      <label>週六 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[5]"></label>
+      <label>週日 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[6]"></label>
     </div>
     <div class="row">
       <div class="col-md-4">
