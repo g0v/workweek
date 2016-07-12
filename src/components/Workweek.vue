@@ -40,7 +40,7 @@
           <li>加班費：{{currentSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
           <li>工時：{{totalWorkHours}}</li>
-          <li v-if="workhours[6] > 0" class="warning">額外補休時數：1 日</li>
+          <li v-if="workhours[6] > 0" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0">
             只有在天災、事變或突發事件才可在週日工作。
           </li>
@@ -76,7 +76,7 @@
           <li>加班費：{{oneRestOneOffSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
           <li>工時：{{totalWorkHours}}</li>
-          <li v-if="workhours[6] > 0" class="warning">額外補休時數：1 日</li>
+          <li v-if="workhours[6] > 0" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0">
             只有在天災、事變或突發事件才可在週日工作。
           </li>
@@ -115,7 +115,7 @@
           <li>加班費：{{twoOffSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
           <li>工時：{{totalWorkHours}}</li>
-          <li v-if="workhours[6] > 0 || workhours[5] > 0" class="warning">
+          <li v-if="workhours[6] > 0 || workhours[5] > 0" class="info">
             額外補休時數：{{ (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0) }} 日
           </li>
           <li class="warning" v-show="workhours[6] > 0 || workhours[5] > 0">
@@ -205,6 +205,11 @@ table.week td, table.week th {
 
 .warning {
   color: red;
+  font-weight: bold;
+}
+
+.info {
+  color: green;
   font-weight: bold;
 }
 
