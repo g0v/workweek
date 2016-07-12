@@ -219,6 +219,10 @@ table.week td, table.week th {
   font-weight: bold;
 }
 
+.alert a {
+  text-decoration: underline;
+}
+
 .emoji {
   width: 25px;
   height: 25px;
