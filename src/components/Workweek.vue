@@ -42,7 +42,7 @@
           <li>工時：{{totalWorkHours}}</li>
           <li v-if="workhours[6] > 0" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0">
-            只有在天災、事變或突發事件才可在週日工作。
+            <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
         </ul>
         <table class="week">
@@ -78,7 +78,7 @@
           <li>工時：{{totalWorkHours}}</li>
           <li v-if="workhours[6] > 0" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0">
-            只有在天災、事變或突發事件才可在週日工作。
+            <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
         </ul>
         <table class="week">
@@ -119,7 +119,7 @@
             額外補休時數：{{ (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0) }} 日
           </li>
           <li class="warning" v-show="workhours[6] > 0 || workhours[5] > 0">
-            只有在天災、事變或突發事件才可在例假日（如週六、週日）工作。
+            <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週六與週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
         </ul>
         <table class="week">
@@ -206,6 +206,11 @@ table.week td, table.week th {
 .warning {
   color: red;
   font-weight: bold;
+}
+
+.warning a {
+  color: red;
+  text-decoration: underline;
 }
 
 .info {
