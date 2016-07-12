@@ -78,11 +78,18 @@ function current (workhours, hourlyPay) {
   // 前兩個小時，時薪為 1/3
   // 2 ~ 8 小時，時薪為 2/3
   // 超過第八個小時，時薪為 1 + 2/3
-
+  // 如果是 7 7 7 7 7 5 0 的狀況，則週六不該為加班日
   if (workhours[5] > 0) {
+    let sum = workhours.slice(0, 5).reduce((a, b) => parseInt(a) + parseInt(b));
     let hours = workhours[5];
+    if (sum <= 40) {
+      let diff = 40 - sum;
+      hours = hours - diff;
+    }
 
-    if (hours <= 2) {
+    if (hours < 0) {
+      // do nothing
+    } else if (hours <= 2) {
       pay += hours * hourlyPay * 1 / 3;
     } else if (hours <= 8) {
       pay += 2 * hourlyPay * 1 / 3 + (hours - 2) * hourlyPay * 2 / 3;
