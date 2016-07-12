@@ -18,6 +18,7 @@
           <li>現行勞基法的週六假設為約定不用上班的日子</li>
           <li>一例一休的休息日假設為星期六</li>
           <li>基於以上假設，在計算輪班制度時（例如四班二輪）可能會與實際狀況有誤差</li>
+          <li>下面的「額外工資」欄位包含加班費與例假日上班的工資加倍發給</li>
         </ul>
       </span>
     </div>
@@ -37,7 +38,7 @@
         <h3>勞基法現行版本</h3>
         <ul>
           <li>週薪：{{regularPay}} 元</li>
-          <li>加班費：{{currentSolution.overtimePay}} 元</li>
+          <li>額外工資：{{currentSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
           <li>工時：{{totalWorkHours}}</li>
           <li v-if="workhours[6] > 0" class="info">額外補休時數：1 日</li>
@@ -73,7 +74,7 @@
         <h3>勞動部草案一例一休版本</h3>
         <ul>
           <li>週薪：{{regularPay}} 元</li>
-          <li>加班費：{{oneRestOneOffSolution.overtimePay}} 元</li>
+          <li>額外工資：{{oneRestOneOffSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
           <li>工時：{{totalWorkHours}}</li>
           <li v-if="workhours[6] > 0" class="info">額外補休時數：1 日</li>
@@ -112,7 +113,7 @@
         <h3>一週兩例假日版本</h3>
         <ul>
           <li>週薪：{{regularPay}} 元</li>
-          <li>加班費：{{twoOffSolution.overtimePay}} 元</li>
+          <li>額外工資：{{twoOffSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
           <li>工時：{{totalWorkHours}}</li>
           <li v-if="workhours[6] > 0 || workhours[5] > 0" class="info">
