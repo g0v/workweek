@@ -22,8 +22,13 @@
         </ul>
       </span>
     </div>
-    <h2>每日工時</h2>
-    <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay}} 元</p>
+    <h2>條件設定</h2>
+    <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay}} 元。</p>
+    <p class="dayoff-options">
+      例假日工作條件設定：<br>
+      <label><input type="checkbox" v-model="disaster"> 例假日發生了天災、事變或突發事件</label><br>
+      <label><input type="checkbox" v-model="laborAgree"> 勞工同意例假日加班</label>
+    </p>
     <div class="input">
       <label>週一 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[0]"></label>
       <label>週二 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[1]"></label>
@@ -41,8 +46,8 @@
           <li>額外工資：{{currentSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
           <li>工時：{{totalWorkHours}}</li>
-          <li v-if="workhours[6] > 0" class="info">額外補休時數：1 日</li>
-          <li class="warning" v-show="workhours[6] > 0">
+          <li v-if="workhours[6] > 0 && laborAgree && disaster" class="info">額外補休時數：1 日</li>
+          <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
         </ul>
@@ -77,8 +82,8 @@
           <li>額外工資：{{oneRestOneOffSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
           <li>工時：{{totalWorkHours}}</li>
-          <li v-if="workhours[6] > 0" class="info">額外補休時數：1 日</li>
-          <li class="warning" v-show="workhours[6] > 0">
+          <li v-if="workhours[6] > 0 && laborAgree && disaster" class="info">額外補休時數：1 日</li>
+          <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
         </ul>
@@ -116,10 +121,12 @@
           <li>額外工資：{{twoOffSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
           <li>工時：{{totalWorkHours}}</li>
-          <li v-if="workhours[6] > 0 || workhours[5] > 0" class="info">
+          <!-- <li v-if="workhours[6] > 0 && laborAgree && disaster" class="info">額外補休時數：1 日</li>
+          <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree"> -->
+          <li v-if="(workhours[6] > 0 || workhours[5] > 0)  && laborAgree && disaster" class="info">
             額外補休時數：{{ (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0) }} 日
           </li>
-          <li class="warning" v-show="workhours[6] > 0 || workhours[5] > 0">
+          <li class="warning" v-show="(workhours[6] > 0 || workhours[5] > 0) && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週六與週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
         </ul>
@@ -163,6 +170,8 @@ export default {
     let workhours = [8, 8, 8, 8, 8, 0, 0];
 
     return {
+      disaster: false,
+      laborAgree: true,
       daynames: solutions.DAY_NAMES,
       workhours: workhours,
       assumingWorkHours: 240,
@@ -178,13 +187,26 @@ export default {
       return this.hourlyPay * 8 * 7;
     },
     currentSolution: function () {
-      return solutions.current(this.workhours, this.hourlyPay);
+      let workhours = this.workhours.slice();
+      if (!this.laborAgree) {
+        workhours[6] = 0;
+      }
+      return solutions.current(workhours, this.hourlyPay);
     },
     oneRestOneOffSolution: function () {
-      return solutions.oneRestOneOff(this.workhours, this.hourlyPay);
+      let workhours = this.workhours.slice();
+      if (!this.laborAgree) {
+        workhours[6] = 0;
+      }
+      return solutions.oneRestOneOff(workhours, this.hourlyPay);
     },
     twoOffSolution: function () {
-      return solutions.twoOff(this.workhours, this.hourlyPay);
+      let workhours = this.workhours.slice();
+      if (!this.laborAgree) {
+        workhours[5] = 0;
+        workhours[6] = 0;
+      }
+      return solutions.twoOff(workhours, this.hourlyPay);
     },
     totalWorkHours: function () {
       return this.workhours.reduce((a, b) =>
@@ -270,6 +292,11 @@ input.workhours {
   width: 50px;
   text-align: center;
   margin-right: 20px;
+}
+
+.dayoff-options label {
+  text-indent: 20px;
+  font-weight: normal;
 }
 
 </style>
