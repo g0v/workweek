@@ -167,7 +167,7 @@ import * as solutions from '../lib/solutions';
 
 export default {
   data () {
-    let workhours = [8, 8, 8, 8, 8, 0, 0];
+    let workhours = [8, 8, 8, 8, 8, 4, 0];
 
     return {
       disaster: false,
