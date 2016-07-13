@@ -37,7 +37,6 @@
       <label>週五 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[4]"></label>
       <label>週六 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[5]"></label>
       <label>週日 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[6]"></label>
-      <a class="btn btn-primary" v-bind:href="shareUrl" target="_blank">分享算式到 Facebook</a>
     </div>
     <div class="row">
       <div class="col-md-4">
@@ -241,10 +240,6 @@ export default {
     totalWorkHours: function () {
       return this.workhours.reduce((a, b) =>
               (parseInt(a) || 0) + (parseInt(b) || 0));
-    },
-    shareUrl: function () {
-      return 'https://www.facebook.com/sharer/sharer.php?u=' +
-             encodeURIComponent(window.location.href);
     }
   },
   watch: {
