@@ -37,6 +37,7 @@
       <label>週五 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[4]"></label>
       <label>週六 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[5]"></label>
       <label>週日 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[6]"></label>
+      <a class="btn btn-primary" v-bind:href="shareUrl" target="_blank">分享算式到 Facebook</a>
     </div>
     <div class="row">
       <div class="col-md-4">
@@ -164,18 +165,47 @@
 
 <script>
 import * as solutions from '../lib/solutions';
+import * as queryString from 'query-string';
+
+function hash (workhours, laborAgree, disaster, monthlyPay) {
+  let params = {
+    workhours: workhours.join(','),
+    laborAgree: laborAgree ? '1' : '0',
+    disaster: disaster ? '1' : '0',
+    monthlyPay: monthlyPay
+  };
+  window.location.hash = '#' + queryString.stringify(params);
+}
 
 export default {
   data () {
-    let workhours = [8, 8, 8, 8, 8, 4, 0];
+    const params = queryString.parse(window.location.hash);
+    let workhours = params.workhours
+                    ? params.workhours.split(',').map(h => parseInt(h))
+                    : [8, 8, 8, 8, 8, 4, 0];
+    let laborAgree = true;
+    let disaster = false;
+    let monthlyPay = 36000;
+
+    if (params.laborAgree && params.laborAgree === '0') {
+      laborAgree = false;
+    }
+
+    if (params.disaster && params.disaster === '1') {
+      disaster = true;
+    }
+
+    if (params.monthlyPay) {
+      monthlyPay = parseInt(params.monthlyPay);
+    }
 
     return {
-      disaster: false,
-      laborAgree: true,
+      disaster: disaster,
+      laborAgree: laborAgree,
       daynames: solutions.DAY_NAMES,
       workhours: workhours,
       assumingWorkHours: 240,
-      monthlyPay: 36000,
+      monthlyPay: monthlyPay,
       regularHoursPerDay: solutions.REGULAR_HOURS_PER_DAY
     };
   },
@@ -211,6 +241,24 @@ export default {
     totalWorkHours: function () {
       return this.workhours.reduce((a, b) =>
               (parseInt(a) || 0) + (parseInt(b) || 0));
+    },
+    shareUrl: function () {
+      return 'https://www.facebook.com/sharer/sharer.php?u=' +
+             encodeURIComponent(window.location.href);
+    }
+  },
+  watch: {
+    'disaster': function (val) {
+      hash(this.workhours, this.laborAgree, this.disaster, this.monthlyPay);
+    },
+    'laborAgree': function (val) {
+      hash(this.workhours, this.laborAgree, this.disaster, this.monthlyPay);
+    },
+    'workhours': function (val) {
+      hash(this.workhours, this.laborAgree, this.disaster, this.monthlyPay);
+    },
+    'monthlyPay': function (val) {
+      hash(this.workhours, this.laborAgree, this.disaster, this.monthlyPay);
     }
   }
 };
