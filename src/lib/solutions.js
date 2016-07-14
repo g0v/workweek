@@ -3,8 +3,8 @@ const DAY_NAMES = ['一', '二', '三', '四', '五', '六', '日'];
 const STATE = {
   OFF: 0,
   REGULAR_WORK: 1,
-  OVER_TWO_HOURS_WORK: 2,
-  OVER_THREE_HOURS_WORK: 3,
+  OVERTIME_WORK: 2,
+  OVER_TWO_HOURS_WORK: 3,
   DAYOFF_WORK: 4
 };
 
@@ -25,19 +25,25 @@ function current (workhours, hourlyPay) {
         currentState = STATE.OFF;
       } else if (dayOfWeek === 6) {
         currentState = STATE.DAYOFF_WORK;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY >= 2) {
+        currentState = STATE.OVER_TWO_HOURS_WORK;
+        overtimeHours++;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY < 2) {
+        currentState = STATE.OVERTIME_WORK;
+        overtimeHours++;
       } else if (total - overtimeHours > 42) {
-        currentState = STATE.OVER_THREE_HOURS_WORK;
+        currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
       } else if (total - overtimeHours > 40) {
-        currentState = STATE.OVER_TWO_HOURS_WORK;
+        currentState = STATE.OVERTIME_WORK;
         overtimeHours++;
       } else if (i < REGULAR_HOURS_PER_DAY) {
         currentState = STATE.REGULAR_WORK;
       } else if (i - REGULAR_HOURS_PER_DAY >= 2) {
-        currentState = STATE.OVER_THREE_HOURS_WORK;
+        currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
       } else if (i - REGULAR_HOURS_PER_DAY < 2) {
-        currentState = STATE.OVER_TWO_HOURS_WORK;
+        currentState = STATE.OVERTIME_WORK;
         overtimeHours++;
       } else {
         currentState = STATE.OFF;
@@ -54,7 +60,11 @@ function current (workhours, hourlyPay) {
   });
 
   let pay = 0;
-  workingMatrix.forEach(day => {
+  workingMatrix.forEach((day, i) => {
+    if (i === 5) {
+      return;
+    }
+
     day.forEach(hour => {
       if (hour === 2) {
         pay += hourlyPay * 4 / 3;
@@ -64,24 +74,44 @@ function current (workhours, hourlyPay) {
     });
   });
 
+  // 週六工作的薪資規則
+  // 前兩個小時，時薪為 1/3
+  // 2 ~ 8 小時，時薪為 2/3
+  // 超過第八個小時，時薪為 1 + 2/3
+  // 如果是 7 7 7 7 7 5 0 的狀況，則週六不該為加班日
+  if (workhours[5] > 0) {
+    let sum = workhours.slice(0, 5).reduce((a, b) => parseInt(a) + parseInt(b));
+    let hours = workhours[5];
+    if (sum <= 40) {
+      let diff = 40 - sum;
+      hours = hours - diff;
+    }
+
+    if (hours < 0) {
+      // do nothing
+    } else if (hours <= 2) {
+      pay += hours * hourlyPay * 1 / 3;
+    } else if (hours <= 8) {
+      pay += 2 * hourlyPay * 1 / 3 + (hours - 2) * hourlyPay * 2 / 3;
+    } else if (hours > 8) {
+      pay += 2 * hourlyPay * 1 / 3 + 6 * hourlyPay * 2 / 3 +
+             (hours - 8) * hourlyPay * 5 / 3;
+    }
+  }
+
   // 週日工作的薪資規則，為什麼搞得這麼複雜？
   // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
-  // 超過八個小時的前兩個小時，薪水以 hourlyPay * 4 / 3 * n 計算
-  // 超過十小時，薪水以 hourlyPay * 5 / 3 * n 計算
+  // 超過八個小時合法的狀況薪水應為兩倍
   if (workhours[6] > 0 && workhours[6] <= 8) {
     pay += hourlyPay * 8;
-  } else if (workhours[6] - 10 > 0) {
-    pay += (workhours[6] - 10) * hourlyPay * 5 / 3 +
-            2 * hourlyPay * 4 / 3 +
-            hourlyPay * 8;
-  } else if (workhours[6] - 8 > 0) {
-    pay += (workhours[6] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
+  } else if (workhours[6] > 8) {
+    pay += (workhours[6] - 8) * hourlyPay * 2 + hourlyPay * 8;
   }
 
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: pay
+    overtimePay: parseInt(pay)
   };
 }
 
@@ -102,19 +132,25 @@ function oneRestOneOff (workhours, hourlyPay) {
         currentState = STATE.OFF;
       } else if (dayOfWeek === 6) {
         currentState = STATE.DAYOFF_WORK;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY >= 2) {
+        currentState = STATE.OVER_TWO_HOURS_WORK;
+        overtimeHours++;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY < 2) {
+        currentState = STATE.OVERTIME_WORK;
+        overtimeHours++;
       } else if (total - overtimeHours > 42) {
-        currentState = STATE.OVER_THREE_HOURS_WORK;
+        currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
       } else if (total - overtimeHours > 40) {
-        currentState = STATE.OVER_TWO_HOURS_WORK;
+        currentState = STATE.OVERTIME_WORK;
         overtimeHours++;
       } else if (i < REGULAR_HOURS_PER_DAY) {
         currentState = STATE.REGULAR_WORK;
       } else if (i - REGULAR_HOURS_PER_DAY >= 2) {
-        currentState = STATE.OVER_THREE_HOURS_WORK;
+        currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
       } else if (i - REGULAR_HOURS_PER_DAY < 2) {
-        currentState = STATE.OVER_TWO_HOURS_WORK;
+        currentState = STATE.OVERTIME_WORK;
         overtimeHours++;
       } else {
         currentState = STATE.OFF;
@@ -162,22 +198,17 @@ function oneRestOneOff (workhours, hourlyPay) {
 
   // 週日工作的薪資規則，為什麼搞得這麼複雜？
   // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
-  // 超過八個小時的前兩個小時，薪水以 hourlyPay * 4 / 3 * n 計算
-  // 超過十小時，薪水以 hourlyPay * 5 / 3 * n 計算
+  // 超過八個小時合法的狀況薪水應為兩倍
   if (workhours[6] > 0 && workhours[6] <= 8) {
     pay += hourlyPay * 8;
-  } else if (workhours[6] - 10 > 0) {
-    pay += (workhours[6] - 10) * hourlyPay * 5 / 3 +
-            2 * hourlyPay * 4 / 3 +
-            hourlyPay * 8;
-  } else if (workhours[6] - 8 > 0) {
-    pay += (workhours[6] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
+  } else if (workhours[6] > 8) {
+    pay += (workhours[6] - 8) * hourlyPay * 2 + hourlyPay * 8;
   }
 
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: pay
+    overtimePay: parseInt(pay)
   };
 }
 
@@ -198,19 +229,25 @@ function twoOff (workhours, hourlyPay) {
         currentState = STATE.OFF;
       } else if (dayOfWeek === 5 || dayOfWeek === 6) {
         currentState = STATE.DAYOFF_WORK;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY >= 2) {
+        currentState = STATE.OVER_TWO_HOURS_WORK;
+        overtimeHours++;
+      } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY < 2) {
+        currentState = STATE.OVERTIME_WORK;
+        overtimeHours++;
       } else if (total - overtimeHours > 42) {
-        currentState = STATE.OVER_THREE_HOURS_WORK;
+        currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
       } else if (total - overtimeHours > 40) {
-        currentState = STATE.OVER_TWO_HOURS_WORK;
+        currentState = STATE.OVERTIME_WORK;
         overtimeHours++;
       } else if (i < REGULAR_HOURS_PER_DAY) {
         currentState = STATE.REGULAR_WORK;
       } else if (i - REGULAR_HOURS_PER_DAY >= 2) {
-        currentState = STATE.OVER_THREE_HOURS_WORK;
+        currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
       } else if (i - REGULAR_HOURS_PER_DAY < 2) {
-        currentState = STATE.OVER_TWO_HOURS_WORK;
+        currentState = STATE.OVERTIME_WORK;
         overtimeHours++;
       } else {
         currentState = STATE.OFF;
@@ -239,24 +276,19 @@ function twoOff (workhours, hourlyPay) {
 
   // 週六與週日工作的薪資規則
   // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
-  // 超過八個小時的前兩個小時，薪水以 hourlyPay * 4 / 3 * n 計算
-  // 超過十小時，薪水以 hourlyPay * 5 / 3 * n 計算
+  // 超過八個小時薪水加倍發給
   [5, 6].forEach(day => {
     if (workhours[day] > 0 && workhours[day] <= 8) {
       pay += hourlyPay * 8;
-    } else if (workhours[day] - 10 > 0) {
-      pay += (workhours[day] - 10) * hourlyPay * 5 / 3 +
-              2 * hourlyPay * 4 / 3 +
-              hourlyPay * 8;
-    } else if (workhours[day] - 8 > 0) {
-      pay += (workhours[day] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
+    } else if (workhours[day] > 8) {
+      pay += (workhours[day] - 8) * hourlyPay * 2 + hourlyPay * 8;
     }
   });
 
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: pay
+    overtimePay: parseInt(pay)
   };
 }
 
