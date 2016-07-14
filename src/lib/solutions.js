@@ -101,16 +101,11 @@ function current (workhours, hourlyPay) {
 
   // 週日工作的薪資規則，為什麼搞得這麼複雜？
   // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
-  // 超過八個小時的前兩個小時，薪水以 hourlyPay * 4 / 3 * n 計算
-  // 超過十小時，薪水以 hourlyPay * 5 / 3 * n 計算
+  // 超過八個小時合法的狀況薪水應為兩倍
   if (workhours[6] > 0 && workhours[6] <= 8) {
     pay += hourlyPay * 8;
-  } else if (workhours[6] - 10 > 0) {
-    pay += (workhours[6] - 10) * hourlyPay * 5 / 3 +
-            2 * hourlyPay * 4 / 3 +
-            hourlyPay * 8;
-  } else if (workhours[6] - 8 > 0) {
-    pay += (workhours[6] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
+  } else if (workhours[6] > 8) {
+    pay += (workhours[6] - 8) * hourlyPay * 2 + hourlyPay * 8;
   }
 
   return {
@@ -203,16 +198,11 @@ function oneRestOneOff (workhours, hourlyPay) {
 
   // 週日工作的薪資規則，為什麼搞得這麼複雜？
   // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
-  // 超過八個小時的前兩個小時，薪水以 hourlyPay * 4 / 3 * n 計算
-  // 超過十小時，薪水以 hourlyPay * 5 / 3 * n 計算
+  // 超過八個小時合法的狀況薪水應為兩倍
   if (workhours[6] > 0 && workhours[6] <= 8) {
     pay += hourlyPay * 8;
-  } else if (workhours[6] - 10 > 0) {
-    pay += (workhours[6] - 10) * hourlyPay * 5 / 3 +
-            2 * hourlyPay * 4 / 3 +
-            hourlyPay * 8;
-  } else if (workhours[6] - 8 > 0) {
-    pay += (workhours[6] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
+  } else if (workhours[6] > 8) {
+    pay += (workhours[6] - 8) * hourlyPay * 2 + hourlyPay * 8;
   }
 
   return {
@@ -286,17 +276,12 @@ function twoOff (workhours, hourlyPay) {
 
   // 週六與週日工作的薪資規則
   // 例假日工作八個小時以內，薪水皆以 hourlyPay * 8 計算
-  // 超過八個小時的前兩個小時，薪水以 hourlyPay * 4 / 3 * n 計算
-  // 超過十小時，薪水以 hourlyPay * 5 / 3 * n 計算
+  // 超過八個小時薪水加倍發給
   [5, 6].forEach(day => {
     if (workhours[day] > 0 && workhours[day] <= 8) {
       pay += hourlyPay * 8;
-    } else if (workhours[day] - 10 > 0) {
-      pay += (workhours[day] - 10) * hourlyPay * 5 / 3 +
-              2 * hourlyPay * 4 / 3 +
-              hourlyPay * 8;
-    } else if (workhours[day] - 8 > 0) {
-      pay += (workhours[day] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
+    } else if (workhours[day] > 8) {
+      pay += (workhours[day] - 8) * hourlyPay * 2 + hourlyPay * 8;
     }
   });
 
