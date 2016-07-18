@@ -187,7 +187,7 @@ export default {
 
     if (params.regularDayOffWorkReason &&
        ((params.regularDayOffWorkReason === 'laborAgree' ||
-         params.regularDayOffWorkReason === 'laborDisgree' ||
+         params.regularDayOffWorkReason === 'laborDisagree' ||
          params.regularDayOffWorkReason === 'disaster'))) {
       regularDayOffWorkReason = params.regularDayOffWorkReason;
     }
