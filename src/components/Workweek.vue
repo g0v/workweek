@@ -26,8 +26,9 @@
     <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay}} 元。</p>
     <p class="dayoff-options">
       例假日工作條件設定：<br>
-      <label><input type="checkbox" v-model="disaster"> 例假日發生了天災、事變或突發事件</label><br>
-      <label><input type="checkbox" v-model="laborAgree"> 勞工同意例假日加班</label>
+      <label><input type="radio" value="disaster" v-model="regularDayOffWorkReason"> 發生天災、事變或突發事件，雇主停止休假要求勞工出勤</label><br>
+      <label><input type="radio" value="laborAgree" v-model="regularDayOffWorkReason"> 沒事兒沒事兒，但雇主要求上班，且勞工同意於例假日出勤</label><br>
+      <label><input type="radio" value="laborDisagree" v-model="regularDayOffWorkReason"> 沒事兒沒事兒，但雇主要求上班，而勞工拒絕於例假日出勤</label>
     </p>
     <div class="input">
       <label>週一 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[0]"></label>
@@ -45,8 +46,8 @@
           <li>週薪：{{regularPay}} 元</li>
           <li>額外工資：{{currentSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
-          <li>工時：{{totalWorkHours}}</li>
-          <li v-if="workhours[6] > 0 && laborAgree && disaster" class="info">額外補休時數：1 日</li>
+          <li>工時：{{oneOffTotalWorkHours}}</li>
+          <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
@@ -81,8 +82,8 @@
           <li>週薪：{{regularPay}} 元</li>
           <li>額外工資：{{oneRestOneOffSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
-          <li>工時：{{totalWorkHours}}</li>
-          <li v-if="workhours[6] > 0 && laborAgree && disaster" class="info">額外補休時數：1 日</li>
+          <li>工時：{{oneOffTotalWorkHours}}</li>
+          <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
@@ -120,10 +121,10 @@
           <li>週薪：{{regularPay}} 元</li>
           <li>額外工資：{{twoOffSolution.overtimePay}} 元</li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
-          <li>工時：{{totalWorkHours}}</li>
-          <!-- <li v-if="workhours[6] > 0 && laborAgree && disaster" class="info">額外補休時數：1 日</li>
+          <li>工時：{{twoOffTotalWorkHours}}</li>
+          <!-- <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree"> -->
-          <li v-if="(workhours[6] > 0 || workhours[5] > 0)  && laborAgree && disaster" class="info">
+          <li v-if="(workhours[6] > 0 || workhours[5] > 0) && disaster" class="info">
             額外補休時數：{{ (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0) }} 日
           </li>
           <li class="warning" v-show="(workhours[6] > 0 || workhours[5] > 0) && !disaster && laborAgree">
@@ -166,11 +167,10 @@
 import * as solutions from '../lib/solutions';
 import * as queryString from 'query-string';
 
-function hash (workhours, laborAgree, disaster, monthlyPay) {
+function hash (workhours, regularDayOffWorkReason, monthlyPay) {
   let params = {
+    regularDayOffWorkReason: regularDayOffWorkReason,
     workhours: workhours.join(','),
-    laborAgree: laborAgree ? '1' : '0',
-    disaster: disaster ? '1' : '0',
     monthlyPay: monthlyPay
   };
   window.location.hash = '#' + queryString.stringify(params);
@@ -182,16 +182,14 @@ export default {
     let workhours = params.workhours
                     ? params.workhours.split(',').map(h => parseInt(h))
                     : [8, 8, 8, 8, 8, 4, 0];
-    let laborAgree = true;
-    let disaster = false;
     let monthlyPay = 36000;
+    let regularDayOffWorkReason = 'disaster';
 
-    if (params.laborAgree && params.laborAgree === '0') {
-      laborAgree = false;
-    }
-
-    if (params.disaster && params.disaster === '1') {
-      disaster = true;
+    if (params.regularDayOffWorkReason &&
+       ((params.regularDayOffWorkReason === 'laborAgree' ||
+         params.regularDayOffWorkReason === 'laborDisgree' ||
+         params.regularDayOffWorkReason === 'disaster'))) {
+      regularDayOffWorkReason = params.regularDayOffWorkReason;
     }
 
     if (params.monthlyPay) {
@@ -199,8 +197,7 @@ export default {
     }
 
     return {
-      disaster: disaster,
-      laborAgree: laborAgree,
+      regularDayOffWorkReason: regularDayOffWorkReason,
       daynames: solutions.DAY_NAMES,
       workhours: workhours,
       assumingWorkHours: 240,
@@ -209,6 +206,12 @@ export default {
     };
   },
   computed: {
+    disaster: function () {
+      return this.regularDayOffWorkReason === 'disaster';
+    },
+    laborAgree: function () {
+      return !(this.regularDayOffWorkReason === 'laborDisagree');
+    },
     hourlyPay: function () {
       return parseInt(this.monthlyPay / this.assumingWorkHours);
     },
@@ -237,23 +240,24 @@ export default {
       }
       return solutions.twoOff(workhours, this.hourlyPay);
     },
-    totalWorkHours: function () {
-      return this.workhours.reduce((a, b) =>
-              (parseInt(a) || 0) + (parseInt(b) || 0));
+    oneOffTotalWorkHours: function () {
+      return this.workhours.reduce((a, b, index) =>
+              (parseInt(a) || 0) + (((index < 6 || this.laborAgree) && parseInt(b)) || 0));
+    },
+    twoOffTotalWorkHours: function () {
+      return this.workhours.reduce((a, b, index) =>
+              (parseInt(a) || 0) + (((index < 5 || this.laborAgree) && parseInt(b)) || 0));
     }
   },
   watch: {
-    'disaster': function (val) {
-      hash(this.workhours, this.laborAgree, this.disaster, this.monthlyPay);
-    },
-    'laborAgree': function (val) {
-      hash(this.workhours, this.laborAgree, this.disaster, this.monthlyPay);
+    'regularDayOffWorkReason': function (val) {
+      hash(this.workhours, this.regularDayOffWorkReason, this.monthlyPay);
     },
     'workhours': function (val) {
-      hash(this.workhours, this.laborAgree, this.disaster, this.monthlyPay);
+      hash(this.workhours, this.regularDayOffWorkReason, this.monthlyPay);
     },
     'monthlyPay': function (val) {
-      hash(this.workhours, this.laborAgree, this.disaster, this.monthlyPay);
+      hash(this.workhours, this.regularDayOffWorkReason, this.monthlyPay);
     }
   }
 };
