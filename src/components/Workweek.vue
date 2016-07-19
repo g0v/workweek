@@ -62,8 +62,7 @@
                 'regular': day === 1,
                 'overtime': day === 2,
                 'overtime-two-hours': day === 3,
-                'work-on-dayoff': day === 4,
-                'work-on-dayoff': day === 5,
+                'work-on-dayoff': day === 4 || day === 5,
                 'off': day === 0
               }"></span>
               <span class="emoji" v-if="day === 0">--</span>
@@ -99,8 +98,7 @@
                 'regular': day === 1,
                 'overtime': day === 2,
                 'overtime-two-hours': day === 3,
-                'work-on-dayoff': day === 4,
-                'work-on-dayoff': day === 5,
+                'work-on-dayoff': day === 4 || day === 5,
                 'off': day === 0
               }"></span>
               <span class="emoji" v-if="day === 0">--</span>
@@ -143,8 +141,7 @@
                 'regular': day === 1,
                 'overtime': day === 2,
                 'overtime-two-hours': day === 3,
-                'work-on-dayoff': day === 4,
-                'work-on-dayoff': day === 5,
+                'work-on-dayoff': day === 4 || day === 5,
                 'off': day === 0
               }"></span>
               <span class="emoji" v-if="day === 0">--</span>
