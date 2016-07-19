@@ -194,7 +194,6 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
         overtimeHoursTotal += workhour;
       }
     }
-    console.log('overtimeHoursTotal', overtimeHoursTotal);
   });
   var transposed = workingMatrix[0].map(function (col, i) {
     return workingMatrix.map(function (row) {
