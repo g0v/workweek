@@ -63,6 +63,7 @@
                 'overtime': day === 2,
                 'overtime-two-hours': day === 3,
                 'work-on-dayoff': day === 4,
+                'work-on-dayoff': day === 5,
                 'off': day === 0
               }"></span>
               <span class="emoji" v-if="day === 0">--</span>
@@ -99,6 +100,7 @@
                 'overtime': day === 2,
                 'overtime-two-hours': day === 3,
                 'work-on-dayoff': day === 4,
+                'work-on-dayoff': day === 5,
                 'off': day === 0
               }"></span>
               <span class="emoji" v-if="day === 0">--</span>
@@ -142,6 +144,7 @@
                 'overtime': day === 2,
                 'overtime-two-hours': day === 3,
                 'work-on-dayoff': day === 4,
+                'work-on-dayoff': day === 5,
                 'off': day === 0
               }"></span>
               <span class="emoji" v-if="day === 0">--</span>
@@ -223,14 +226,14 @@ export default {
       if (!this.laborAgree) {
         workhours[6] = 0;
       }
-      return solutions.current(workhours, this.hourlyPay);
+      return solutions.current(workhours, this.hourlyPay, this.regularDayOffWorkReason);
     },
     oneRestOneOffSolution: function () {
       let workhours = this.workhours.slice();
       if (!this.laborAgree) {
         workhours[6] = 0;
       }
-      return solutions.oneRestOneOff(workhours, this.hourlyPay);
+      return solutions.oneRestOneOff(workhours, this.hourlyPay, this.regularDayOffWorkReason);
     },
     twoOffSolution: function () {
       let workhours = this.workhours.slice();
@@ -238,7 +241,7 @@ export default {
         workhours[5] = 0;
         workhours[6] = 0;
       }
-      return solutions.twoOff(workhours, this.hourlyPay);
+      return solutions.twoOff(workhours, this.hourlyPay, this.regularDayOffWorkReason);
     },
     oneOffTotalWorkHours: function () {
       return this.workhours.reduce((a, b, index) =>

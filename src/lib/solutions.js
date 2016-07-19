@@ -5,10 +5,11 @@ const STATE = {
   REGULAR_WORK: 1,
   OVERTIME_WORK: 2,
   OVER_TWO_HOURS_WORK: 3,
-  DAYOFF_WORK: 4
+  DAYOFF_WORK: 4,
+  DAYOFF_ILLEGAL_WORK: 5
 };
 
-function current (workhours, hourlyPay) {
+function current (workhours, hourlyPay, reason) {
   let workingMatrix = [];
   let total = 0;
   let overtimeHours = 0;
@@ -25,7 +26,7 @@ function current (workhours, hourlyPay) {
       if (workhour <= i) {
         currentState = STATE.OFF;
       } else if (dayOfWeek === 6) {
-        currentState = STATE.DAYOFF_WORK;
+        currentState = reason === 'disaster' ? STATE.DAYOFF_WORK : STATE.DAYOFF_ILLEGAL_WORK;
       } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY >= 2) {
         currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
@@ -56,7 +57,6 @@ function current (workhours, hourlyPay) {
 
     if (dayOfWeek < 5) {
       let overtimeHours = workhour - 8;
-      console.log('overtimeHours', overtimeHours, 'hourlyPay', hourlyPay);
       if (overtimeHours > 0 && overtimeHours <= 2) {
         pay += hourlyPay * 4 / 3 * overtimeHours;
       } else if (overtimeHours > 2) {
@@ -111,7 +111,7 @@ function current (workhours, hourlyPay) {
   };
 }
 
-function oneRestOneOff (workhours, hourlyPay) {
+function oneRestOneOff (workhours, hourlyPay, reason) {
   let workingMatrix = [];
   let total = 0;
   let overtimeHours = 0;
@@ -128,7 +128,7 @@ function oneRestOneOff (workhours, hourlyPay) {
       if (workhour <= i) {
         currentState = STATE.OFF;
       } else if (dayOfWeek === 6) {
-        currentState = STATE.DAYOFF_WORK;
+        currentState = reason === 'disaster' ? STATE.DAYOFF_WORK : STATE.DAYOFF_ILLEGAL_WORK;
       } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY >= 2) {
         currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
@@ -159,7 +159,6 @@ function oneRestOneOff (workhours, hourlyPay) {
 
     if (dayOfWeek < 5) {
       let overtimeHours = workhour - 8;
-      console.log('overtimeHours', overtimeHours, 'hourlyPay', hourlyPay);
       if (overtimeHours > 0 && overtimeHours <= 2) {
         pay += hourlyPay * 4 / 3 * overtimeHours;
       } else if (overtimeHours > 2) {
@@ -204,7 +203,7 @@ function oneRestOneOff (workhours, hourlyPay) {
   };
 }
 
-function twoOff (workhours, hourlyPay) {
+function twoOff (workhours, hourlyPay, reason) {
   let workingMatrix = [];
   let total = 0;
   let overtimeHours = 0;
@@ -221,7 +220,7 @@ function twoOff (workhours, hourlyPay) {
       if (workhour <= i) {
         currentState = STATE.OFF;
       } else if (dayOfWeek === 5 || dayOfWeek === 6) {
-        currentState = STATE.DAYOFF_WORK;
+        currentState = reason === 'disaster' ? STATE.DAYOFF_WORK : STATE.DAYOFF_ILLEGAL_WORK;
       } else if (total - overtimeHours > 40 && i - REGULAR_HOURS_PER_DAY >= 2) {
         currentState = STATE.OVER_TWO_HOURS_WORK;
         overtimeHours++;
