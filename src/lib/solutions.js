@@ -12,6 +12,7 @@ function current (workhours, hourlyPay) {
   let workingMatrix = [];
   let total = 0;
   let overtimeHours = 0;
+  let pay = 0;
 
   workhours.forEach((workhour, dayOfWeek) => {
     let workday = Array.apply(null, Array(12)).map((val, i) => {
@@ -52,25 +53,20 @@ function current (workhours, hourlyPay) {
       return currentState;
     });
     workingMatrix.push(workday);
+
+    if (dayOfWeek < 5) {
+      let overtimeHours = workhour - 8;
+      console.log('overtimeHours', overtimeHours, 'hourlyPay', hourlyPay);
+      if (overtimeHours > 0 && overtimeHours <= 2) {
+        pay += hourlyPay * 4 / 3 * overtimeHours;
+      } else if (overtimeHours > 2) {
+        pay += hourlyPay * 4 / 3 * 2 + hourlyPay * 5 / 3 * (overtimeHours - 2);
+      }
+    }
   });
   var transposed = workingMatrix[0].map(function (col, i) {
     return workingMatrix.map(function (row) {
       return row[i];
-    });
-  });
-
-  let pay = 0;
-  workingMatrix.forEach((day, i) => {
-    if (i === 5) {
-      return;
-    }
-
-    day.forEach(hour => {
-      if (hour === 2) {
-        pay += hourlyPay * 4 / 3;
-      } else if (hour === 3) {
-        pay += hourlyPay * 5 / 3;
-      }
     });
   });
 
@@ -80,7 +76,7 @@ function current (workhours, hourlyPay) {
   // 超過第八個小時，時薪為 1 + 2/3
   // 如果是 7 7 7 7 7 5 0 的狀況，則週六不該為加班日
   if (workhours[5] > 0) {
-    let sum = workhours.slice(0, 5).reduce((a, b) => parseInt(a) + parseInt(b));
+    let sum = workhours.slice(0, 5).reduce((a, b) => parseFloat(a) + parseFloat(b));
     let hours = workhours[5];
     if (sum <= 40) {
       let diff = 40 - sum;
@@ -111,7 +107,7 @@ function current (workhours, hourlyPay) {
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: parseInt(pay)
+    overtimePay: parseFloat(pay)
   };
 }
 
@@ -119,6 +115,7 @@ function oneRestOneOff (workhours, hourlyPay) {
   let workingMatrix = [];
   let total = 0;
   let overtimeHours = 0;
+  let pay = 0;
 
   workhours.forEach((workhour, dayOfWeek) => {
     let workday = Array.apply(null, Array(12)).map((val, i) => {
@@ -159,25 +156,20 @@ function oneRestOneOff (workhours, hourlyPay) {
       return currentState;
     });
     workingMatrix.push(workday);
+
+    if (dayOfWeek < 5) {
+      let overtimeHours = workhour - 8;
+      console.log('overtimeHours', overtimeHours, 'hourlyPay', hourlyPay);
+      if (overtimeHours > 0 && overtimeHours <= 2) {
+        pay += hourlyPay * 4 / 3 * overtimeHours;
+      } else if (overtimeHours > 2) {
+        pay += hourlyPay * 4 / 3 * 2 + hourlyPay * 5 / 3 * (overtimeHours - 2);
+      }
+    }
   });
   var transposed = workingMatrix[0].map(function (col, i) {
     return workingMatrix.map(function (row) {
       return row[i];
-    });
-  });
-
-  let pay = 0;
-  workingMatrix.forEach((day, i) => {
-    if (i === 5) {
-      return;
-    }
-
-    day.forEach(hour => {
-      if (hour === 2) {
-        pay += hourlyPay * 4 / 3;
-      } else if (hour === 3) {
-        pay += hourlyPay * 5 / 3;
-      }
     });
   });
 
@@ -208,7 +200,7 @@ function oneRestOneOff (workhours, hourlyPay) {
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: parseInt(pay)
+    overtimePay: parseFloat(pay)
   };
 }
 
@@ -216,6 +208,7 @@ function twoOff (workhours, hourlyPay) {
   let workingMatrix = [];
   let total = 0;
   let overtimeHours = 0;
+  let pay = 0;
 
   workhours.forEach((workhour, dayOfWeek) => {
     let workday = Array.apply(null, Array(12)).map((val, i) => {
@@ -256,21 +249,19 @@ function twoOff (workhours, hourlyPay) {
       return currentState;
     });
     workingMatrix.push(workday);
+
+    if (dayOfWeek < 5) {
+      let overtimeHours = workhour - 8;
+      if (overtimeHours > 0 && overtimeHours <= 2) {
+        pay += hourlyPay * 4 / 3 * overtimeHours;
+      } else if (overtimeHours > 2) {
+        pay += hourlyPay * 4 / 3 * 2 + hourlyPay * 5 / 3 * (overtimeHours - 2);
+      }
+    }
   });
   var transposed = workingMatrix[0].map(function (col, i) {
     return workingMatrix.map(function (row) {
       return row[i];
-    });
-  });
-
-  let pay = 0;
-  workingMatrix.forEach(day => {
-    day.forEach(hour => {
-      if (hour === 2) {
-        pay += hourlyPay * 4 / 3;
-      } else if (hour === 3) {
-        pay += hourlyPay * 5 / 3;
-      }
     });
   });
 
@@ -288,7 +279,7 @@ function twoOff (workhours, hourlyPay) {
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: parseInt(pay)
+    overtimePay: parseFloat(pay)
   };
 }
 

@@ -23,7 +23,7 @@
       </span>
     </div>
     <h2>條件設定</h2>
-    <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay}} 元。</p>
+    <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" number type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay.toFixed(2)}} 元。</p>
     <p class="dayoff-options">
       例假日工作條件設定：<br>
       <label><input type="radio" value="disaster" v-model="regularDayOffWorkReason"> 發生天災、事變或突發事件，雇主停止休假要求勞工出勤</label><br>
@@ -31,20 +31,20 @@
       <label><input type="radio" value="laborDisagree" v-model="regularDayOffWorkReason"> <span class="strong">沒有</span>發生上述事件，但雇主要求上班，而勞工拒絕於例假日出勤</label>
     </p>
     <div class="input">
-      <label>週一 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[0]"></label>
-      <label>週二 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[1]"></label>
-      <label>週三 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[2]"></label>
-      <label>週四 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[3]"></label>
-      <label>週五 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[4]"></label>
-      <label>週六 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[5]"></label>
-      <label>週日 <input debounce="100" type="number" min="0" max="24" class="workhours" v-model="workhours[6]"></label>
+      <label>週一 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[0]"></label>
+      <label>週二 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[1]"></label>
+      <label>週三 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[2]"></label>
+      <label>週四 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[3]"></label>
+      <label>週五 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[4]"></label>
+      <label>週六 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[5]"></label>
+      <label>週日 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[6]"></label>
     </div>
     <div class="row">
       <div class="col-md-4">
         <h3>勞基法現行版本</h3>
         <ul>
           <li>週薪：{{regularPay}} 元</li>
-          <li>額外工資：{{currentSolution.overtimePay}} 元</li>
+          <li>額外工資：{{currentSolution.overtimePay.toFixed(2)}} 元</li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
           <li>工時：{{oneOffTotalWorkHours}}</li>
           <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
@@ -80,7 +80,7 @@
         <h3>勞動部草案一例一休版本</h3>
         <ul>
           <li>週薪：{{regularPay}} 元</li>
-          <li>額外工資：{{oneRestOneOffSolution.overtimePay}} 元</li>
+          <li>額外工資：{{oneRestOneOffSolution.overtimePay.toFixed(2)}} 元</li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
           <li>工時：{{oneOffTotalWorkHours}}</li>
           <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
@@ -119,7 +119,7 @@
         <h3>一週兩例假日版本</h3>
         <ul>
           <li>週薪：{{regularPay}} 元</li>
-          <li>額外工資：{{twoOffSolution.overtimePay}} 元</li>
+          <li>額外工資：{{twoOffSolution.overtimePay.toFixed(2)}} 元</li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
           <li>工時：{{twoOffTotalWorkHours}}</li>
           <!-- <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
@@ -193,7 +193,7 @@ export default {
     }
 
     if (params.monthlyPay) {
-      monthlyPay = parseInt(params.monthlyPay);
+      monthlyPay = parseFloat(params.monthlyPay);
     }
 
     return {
@@ -213,7 +213,7 @@ export default {
       return !(this.regularDayOffWorkReason === 'laborDisagree');
     },
     hourlyPay: function () {
-      return parseInt(this.monthlyPay / this.assumingWorkHours);
+      return parseFloat(this.monthlyPay / this.assumingWorkHours);
     },
     regularPay: function () {
       return this.hourlyPay * 8 * 7;
@@ -242,11 +242,11 @@ export default {
     },
     oneOffTotalWorkHours: function () {
       return this.workhours.reduce((a, b, index) =>
-              (parseInt(a) || 0) + (((index < 6 || this.laborAgree) && parseInt(b)) || 0));
+              (parseFloat(a) || 0) + (((index < 6 || this.laborAgree) && parseFloat(b)) || 0));
     },
     twoOffTotalWorkHours: function () {
       return this.workhours.reduce((a, b, index) =>
-              (parseInt(a) || 0) + (((index < 5 || this.laborAgree) && parseInt(b)) || 0));
+              (parseFloat(a) || 0) + (((index < 5 || this.laborAgree) && parseFloat(b)) || 0));
     }
   },
   watch: {
