@@ -108,7 +108,13 @@ function current (workhours, hourlyPay, reason) {
   if (workhours[6] > 0 && workhours[6] <= 8) {
     pay += hourlyPay * 8;
   } else if (workhours[6] > 8) {
-    pay += (workhours[6] - 8) * hourlyPay * 2 + hourlyPay * 8;
+    if (reason === 'disaster') {
+      pay += (workhours[6] - 8) * hourlyPay * 2 + hourlyPay * 8;
+    } else if (workhours[6] <= 10) {
+      pay += (workhours[6] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
+    } else if (workhours[6] > 10) {
+      pay += (workhours[6] - 10) * hourlyPay * 5 / 3 + 2 * hourlyPay * 4 / 3 + hourlyPay * 8;
+    }
   }
 
   return {
@@ -217,7 +223,13 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
   if (workhours[6] > 0 && workhours[6] <= 8) {
     pay += hourlyPay * 8;
   } else if (workhours[6] > 8) {
-    pay += (workhours[6] - 8) * hourlyPay * 2 + hourlyPay * 8;
+    if (reason === 'disaster') {
+      pay += (workhours[6] - 8) * hourlyPay * 2 + hourlyPay * 8;
+    } else if (workhours[6] <= 10) {
+      pay += (workhours[6] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
+    } else if (workhours[6] > 10) {
+      pay += (workhours[6] - 10) * hourlyPay * 5 / 3 + 2 * hourlyPay * 4 / 3 + hourlyPay * 8;
+    }
   }
 
   return {
@@ -301,7 +313,13 @@ function twoOff (workhours, hourlyPay, reason) {
     if (workhours[day] > 0 && workhours[day] <= 8) {
       pay += hourlyPay * 8;
     } else if (workhours[day] > 8) {
-      pay += (workhours[day] - 8) * hourlyPay * 2 + hourlyPay * 8;
+      if (reason === 'disaster') {
+        pay += (workhours[day] - 8) * hourlyPay * 2 + hourlyPay * 8;
+      } else if (workhours[day] <= 10) {
+        pay += (workhours[day] - 8) * hourlyPay * 4 / 3 + hourlyPay * 8;
+      } else if (workhours[day] > 10) {
+        pay += (workhours[day] - 10) * hourlyPay * 5 / 3 + 2 * hourlyPay * 4 / 3 + hourlyPay * 8;
+      }
     }
   });
 
