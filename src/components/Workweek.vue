@@ -44,9 +44,9 @@
         <h3>勞基法現行版本</h3>
         <ul>
           <li>週薪：{{regularPay}} 元</li>
+          <li>加班時數：{{currentSolution.overtimeHoursTotal}}</li>
           <li>額外工資：{{currentSolution.overtimePay.toFixed(2)}} 元</li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
-          <li>工時：{{oneOffTotalWorkHours}}</li>
           <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
@@ -81,9 +81,9 @@
         <h3>勞動部草案一例一休版本</h3>
         <ul>
           <li>週薪：{{regularPay}} 元</li>
+          <li>加班時數：{{oneRestOneOffSolution.overtimeHoursTotal}}</li>
           <li>額外工資：{{oneRestOneOffSolution.overtimePay.toFixed(2)}} 元</li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
-          <li>工時：{{oneOffTotalWorkHours}}</li>
           <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
@@ -121,9 +121,9 @@
         <h3>一週兩例假日版本</h3>
         <ul>
           <li>週薪：{{regularPay}} 元</li>
+          <li>加班時數：{{twoOffSolution.overtimeHoursTotal}}</li>
           <li>額外工資：{{twoOffSolution.overtimePay.toFixed(2)}} 元</li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
-          <li>工時：{{twoOffTotalWorkHours}}</li>
           <!-- <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree"> -->
           <li v-if="(workhours[6] > 0 || workhours[5] > 0) && disaster" class="info">

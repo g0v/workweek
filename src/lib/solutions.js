@@ -13,6 +13,7 @@ function current (workhours, hourlyPay, reason) {
   let workingMatrix = [];
   let total = 0;
   let overtimeHours = 0;
+  let overtimeHoursTotal = 0;
   let pay = 0;
 
   workhours.forEach((workhour, dayOfWeek) => {
@@ -62,6 +63,12 @@ function current (workhours, hourlyPay, reason) {
       } else if (overtimeHours > 2) {
         pay += hourlyPay * 4 / 3 * 2 + hourlyPay * 5 / 3 * (overtimeHours - 2);
       }
+    }
+
+    if (dayOfWeek < 5 || (dayOfWeek === 6 && reason !== 'disaster')) {
+      overtimeHoursTotal += workhour - 8 > 0 ? workhour - 8 : 0;
+    } else if (dayOfWeek === 5) {
+      overtimeHoursTotal += workhour;
     }
   });
   var transposed = workingMatrix[0].map(function (col, i) {
@@ -107,7 +114,8 @@ function current (workhours, hourlyPay, reason) {
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: parseFloat(pay)
+    overtimePay: parseFloat(pay),
+    overtimeHoursTotal: overtimeHoursTotal
   };
 }
 
@@ -115,6 +123,7 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
   let workingMatrix = [];
   let total = 0;
   let overtimeHours = 0;
+  let overtimeHoursTotal = 0;
   let pay = 0;
 
   workhours.forEach((workhour, dayOfWeek) => {
@@ -165,6 +174,21 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
         pay += hourlyPay * 4 / 3 * 2 + hourlyPay * 5 / 3 * (overtimeHours - 2);
       }
     }
+
+    if (dayOfWeek < 5 || (dayOfWeek === 6 && reason !== 'disaster')) {
+      overtimeHoursTotal += workhour - 8 > 0 ? workhour - 8 : 0;
+    } else if (dayOfWeek === 5) {
+      if (workhour > 0 && workhour <= 4) {
+        overtimeHoursTotal += 4;
+      } else if (workhour > 0 && workhour <= 8) {
+        overtimeHoursTotal += 8;
+      } else if (workhour > 0 && workhour <= 12) {
+        overtimeHoursTotal += 12;
+      } else {
+        overtimeHoursTotal += workhour;
+      }
+    }
+    console.log('overtimeHoursTotal', overtimeHoursTotal);
   });
   var transposed = workingMatrix[0].map(function (col, i) {
     return workingMatrix.map(function (row) {
@@ -199,7 +223,8 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: parseFloat(pay)
+    overtimePay: parseFloat(pay),
+    overtimeHoursTotal: overtimeHoursTotal
   };
 }
 
@@ -207,6 +232,7 @@ function twoOff (workhours, hourlyPay, reason) {
   let workingMatrix = [];
   let total = 0;
   let overtimeHours = 0;
+  let overtimeHoursTotal = 0;
   let pay = 0;
 
   workhours.forEach((workhour, dayOfWeek) => {
@@ -257,6 +283,10 @@ function twoOff (workhours, hourlyPay, reason) {
         pay += hourlyPay * 4 / 3 * 2 + hourlyPay * 5 / 3 * (overtimeHours - 2);
       }
     }
+
+    if (dayOfWeek < 5 || ((dayOfWeek === 6 || dayOfWeek === 5) && reason !== 'disaster')) {
+      overtimeHoursTotal += workhour - 8 > 0 ? workhour - 8 : 0;
+    }
   });
   var transposed = workingMatrix[0].map(function (col, i) {
     return workingMatrix.map(function (row) {
@@ -278,7 +308,8 @@ function twoOff (workhours, hourlyPay, reason) {
   return {
     workingMatrix: workingMatrix,
     transposed: transposed,
-    overtimePay: parseFloat(pay)
+    overtimePay: parseFloat(pay),
+    overtimeHoursTotal: overtimeHoursTotal
   };
 }
 
