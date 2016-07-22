@@ -23,7 +23,7 @@
           <li>一例一休的休息日假設為星期六</li>
           <li>基於以上假設，在計算輪班制度時（例如四班二輪）可能會與實際狀況有誤差</li>
           <li>下面的「額外工資」欄位包含加班費與例假日上班的工資加倍發給</li>
-          <li>原有七天假期由於以前的雙週八十四小時工時，所以週休二日的勞工沒有休假，但應映現行法令改為單週工時四十小時，週休二日的勞工也應該要放這七天，詳情請見 <a target="_blank" href="https://youtu.be/4gd2m_73NHE?t=23m13s">這裡</a>。</li>
+          <li>原有七天假期由於以前的雙週八十四小時工時，所以週休二日的勞工沒有休假，但應映現行法令改為單週工時四十小時，週休二日的勞工也應該要放這七天，詳情請見 <a target="_blank" href="https://youtu.be/4gd2m_73NHE?t=23m13s">有話好說節目的討論</a> 與 <a href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030002&FLNO=23" target="_blank">勞基法施行細則 23 條</a></li>
         </ul>
       </span>
     </div>
