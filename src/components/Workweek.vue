@@ -8,7 +8,11 @@
     </div>
   </div>
   <div class="container">
-    <div class="alert alert-info">
+    <div class="handler">
+      <a v-show="!expandDetail" v-on:click="toggleExpanding">[+] 展開詳細說明</a>
+      <a v-show="expandDetail" v-on:click="toggleExpanding">[-] 收起詳細說明</a>
+    </div>
+    <div v-show="expandDetail" class="alert alert-info">
       <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
       <span>
         前置條件：
@@ -19,6 +23,7 @@
           <li>一例一休的休息日假設為星期六</li>
           <li>基於以上假設，在計算輪班制度時（例如四班二輪）可能會與實際狀況有誤差</li>
           <li>下面的「額外工資」欄位包含加班費與例假日上班的工資加倍發給</li>
+          <li>原有七天假期由於以前的雙週八十四小時工時，所以週休二日的勞工沒有休假，但應映現行法令改為單週工時四十小時，週休二日的勞工也應該要放這七天，詳情請見 <a target="_blank" href="https://youtu.be/4gd2m_73NHE?t=23m13s">這裡</a>。</li>
         </ul>
       </span>
     </div>
@@ -47,6 +52,7 @@
           <li>加班時數：{{currentSolution.overtimeHoursTotal}}</li>
           <li>額外工資：{{currentSolution.overtimePay.toFixed(2)}} 元</li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
+          <li class="pro">👍 國定假日天數：19 天</li>
           <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
@@ -69,7 +75,7 @@
             </td>
           </tr>
         </table>
-        <div class="alert alert-info">
+        <div v-show="expandDetail" class="alert alert-info">
           相關規定：
           <ul>
             <li>台(87)勞動二字第39675號函：例假日（通常是週日）上班低於八個小時，薪水均為 {{hourlyPay}} x 8</li>
@@ -83,6 +89,7 @@
           <li>加班時數：{{oneRestOneOffSolution.overtimeHoursTotal}}</li>
           <li>額外工資：{{oneRestOneOffSolution.overtimePay.toFixed(2)}} 元</li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
+          <li class="con">👎 國定假日天數：12 天</li>
           <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
@@ -105,7 +112,7 @@
             </td>
           </tr>
         </table>
-        <div class="alert alert-info">
+        <div v-show="expandDetail" class="alert alert-info">
           相關規則：
           <ul>
             <li>
@@ -122,6 +129,7 @@
           <li>加班時數：{{twoOffSolution.overtimeHoursTotal}}</li>
           <li>額外工資：{{twoOffSolution.overtimePay.toFixed(2)}} 元</li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
+          <li class="pro">👍 國定假日天數：19 天</li>
           <!-- <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree"> -->
           <li v-if="(workhours[6] > 0 || workhours[5] > 0) && disaster" class="info">
@@ -148,7 +156,7 @@
             </td>
           </tr>
         </table>
-        <div class="alert alert-info">
+        <div v-show="expandDetail" class="alert alert-info">
           相關規則：
           <ul>
             <li>國民黨版在立法說明提到比照公務員，兩例有可能實質變兩休，但目前草案並沒有這個效果，還要觀察是否有後續動作</li>
@@ -177,6 +185,12 @@ function hash (workhours, regularDayOffWorkReason, monthlyPay) {
 }
 
 export default {
+  methods: {
+    toggleExpanding: function (evt) {
+      this.expandDetail = !this.expandDetail;
+    }
+  },
+
   data () {
     const params = queryString.parse(window.location.hash);
     let workhours = params.workhours
@@ -202,6 +216,7 @@ export default {
       workhours: workhours,
       assumingWorkHours: 240,
       monthlyPay: monthlyPay,
+      expandDetail: false,
       regularHoursPerDay: solutions.REGULAR_HOURS_PER_DAY
     };
   },
@@ -349,6 +364,18 @@ input.workhours {
 .strong {
   color: red;
   font-weight: bold;
+}
+
+.pro {
+  color: green;
+}
+
+.con {
+  color: red;
+}
+
+.handler a {
+  cursor: pointer;
 }
 
 </style>
