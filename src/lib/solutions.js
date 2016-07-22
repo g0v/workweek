@@ -1,4 +1,5 @@
 const REGULAR_HOURS_PER_DAY = 8;
+const TOTAL_WEEK_PER_YEAR = 52;
 const DAY_NAMES = ['一', '二', '三', '四', '五', '六', '日'];
 const STATE = {
   OFF: 0,
@@ -15,6 +16,7 @@ function current (workhours, hourlyPay, reason) {
   let overtimeHours = 0;
   let overtimeHoursTotal = 0;
   let pay = 0;
+  let holiday = 19;
 
   workhours.forEach((workhour, dayOfWeek) => {
     let workday = Array.apply(null, Array(12)).map((val, i) => {
@@ -117,11 +119,20 @@ function current (workhours, hourlyPay, reason) {
     }
   }
 
+  let dayoff = 7;
+  workhours.slice(0, 6).forEach(d => {
+    if (d > 0) {
+      dayoff--;
+    }
+  });
+
   return {
+    holiday: holiday,
     workingMatrix: workingMatrix,
     transposed: transposed,
     overtimePay: parseFloat(pay),
-    overtimeHoursTotal: overtimeHoursTotal
+    overtimeHoursTotal: overtimeHoursTotal,
+    totalWorkdays: 365 - holiday - dayoff * TOTAL_WEEK_PER_YEAR
   };
 }
 
@@ -131,6 +142,7 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
   let overtimeHours = 0;
   let overtimeHoursTotal = 0;
   let pay = 0;
+  let holiday = 12;
 
   workhours.forEach((workhour, dayOfWeek) => {
     let workday = Array.apply(null, Array(12)).map((val, i) => {
@@ -231,11 +243,20 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
     }
   }
 
+  let dayoff = 7;
+  workhours.slice(0, 6).forEach(d => {
+    if (d > 0) {
+      dayoff--;
+    }
+  });
+
   return {
+    holiday: holiday,
     workingMatrix: workingMatrix,
     transposed: transposed,
     overtimePay: parseFloat(pay),
-    overtimeHoursTotal: overtimeHoursTotal
+    overtimeHoursTotal: overtimeHoursTotal,
+    totalWorkdays: 365 - holiday - dayoff * TOTAL_WEEK_PER_YEAR
   };
 }
 
@@ -245,6 +266,7 @@ function twoOff (workhours, hourlyPay, reason) {
   let overtimeHours = 0;
   let overtimeHoursTotal = 0;
   let pay = 0;
+  let holiday = 19;
 
   workhours.forEach((workhour, dayOfWeek) => {
     let workday = Array.apply(null, Array(12)).map((val, i) => {
@@ -322,11 +344,20 @@ function twoOff (workhours, hourlyPay, reason) {
     }
   });
 
+  let dayoff = 7;
+  workhours.slice(0, 5).forEach(d => {
+    if (d > 0) {
+      dayoff--;
+    }
+  });
+
   return {
+    holiday: holiday,
     workingMatrix: workingMatrix,
     transposed: transposed,
     overtimePay: parseFloat(pay),
-    overtimeHoursTotal: overtimeHoursTotal
+    overtimeHoursTotal: overtimeHoursTotal,
+    totalWorkdays: 365 - holiday - dayoff * TOTAL_WEEK_PER_YEAR
   };
 }
 
