@@ -188,6 +188,19 @@ function hash (workhours, regularDayOffWorkReason, monthlyPay) {
   window.location.hash = '#' + queryString.stringify(params);
 }
 
+function normalize (workhours) {
+  let hours = workhours.slice().map(h => {
+    h = parseFloat(h);
+    if (isNaN(h)) {
+      h = 0;
+    }
+    h = Math.min(24, h);
+    h = Math.max(0, h);
+    return h;
+  });
+  return hours;
+}
+
 export default {
   methods: {
     toggleExpanding: function (evt) {
@@ -238,21 +251,21 @@ export default {
       return this.hourlyPay * 8 * 7;
     },
     currentSolution: function () {
-      let workhours = this.workhours.slice();
+      let workhours = normalize(this.workhours);
       if (!this.laborAgree) {
         workhours[6] = 0;
       }
       return solutions.current(workhours, this.hourlyPay, this.regularDayOffWorkReason);
     },
     oneRestOneOffSolution: function () {
-      let workhours = this.workhours.slice();
+      let workhours = normalize(this.workhours);
       if (!this.laborAgree) {
         workhours[6] = 0;
       }
       return solutions.oneRestOneOff(workhours, this.hourlyPay, this.regularDayOffWorkReason);
     },
     twoOffSolution: function () {
-      let workhours = this.workhours.slice();
+      let workhours = normalize(this.workhours);
       if (!this.laborAgree) {
         workhours[5] = 0;
         workhours[6] = 0;
