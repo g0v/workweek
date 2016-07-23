@@ -1,12 +1,4 @@
 <template>
-  <div class="jumbotron">
-    <div class="container">
-      <h1><span class="glyphicon glyphicon-wrench"></span>勞基法計算機</h1>
-      <p>
-        沒人搞得清楚這次修法正確的計算方式，不如來個計算機自己按一按吧。
-      </p>
-    </div>
-  </div>
   <div class="container">
     <div class="handler">
       <a v-show="!expandDetail" v-on:click="toggleExpanding">[+] 展開詳細說明</a>
@@ -180,24 +172,10 @@
       </div>
     </div>
   </div>
-  <div class="footer">
-    本專案源碼於 <a href="https://github.com/g0v/workweek">g0v/workweek</a> 以 MIT 授權釋出，
-    有任何問題請提交至 <a href="https://github.com/g0v/workweek/issues">issue tracker</a>
-  </div>
 </template>
 
 <script>
 import * as solutions from '../lib/solutions';
-import * as queryString from 'query-string';
-
-function hash (workhours, regularDayOffWorkReason, monthlyPay) {
-  let params = {
-    regularDayOffWorkReason: regularDayOffWorkReason,
-    workhours: workhours.join(','),
-    monthlyPay: monthlyPay
-  };
-  window.location.hash = '#' + queryString.stringify(params);
-}
 
 function normalize (workhours) {
   let hours = workhours.slice().map(h => {
@@ -216,11 +194,24 @@ export default {
   methods: {
     toggleExpanding: function (evt) {
       this.expandDetail = !this.expandDetail;
+    },
+
+    hash: function () {
+      let params = {
+        regularDayOffWorkReason: this.regularDayOffWorkReason,
+        workhours: this.workhours.join(','),
+        monthlyPay: this.monthlyPay
+      };
+
+      this.$router.go({
+        name: 'workweek',
+        query: params
+      });
     }
   },
 
   data () {
-    const params = queryString.parse(window.location.hash);
+    const params = this.$route.query;
     let workhours = params.workhours
                     ? params.workhours.split(',').map(h => parseInt(h))
                     : [8, 8, 8, 8, 8, 4, 0];
@@ -294,13 +285,13 @@ export default {
   },
   watch: {
     'regularDayOffWorkReason': function (val) {
-      hash(this.workhours, this.regularDayOffWorkReason, this.monthlyPay);
+      this.hash();
     },
     'workhours': function (val) {
-      hash(this.workhours, this.regularDayOffWorkReason, this.monthlyPay);
+      this.hash();
     },
     'monthlyPay': function (val) {
-      hash(this.workhours, this.regularDayOffWorkReason, this.monthlyPay);
+      this.hash();
     }
   }
 };
@@ -359,13 +350,6 @@ table.week td, table.week th {
 
 .emoji.work-on-dayoff {
   background-image: url('../assets/dayoff.png');
-}
-
-.footer {
-  margin-top: 50px;
-  padding: 5px;
-  background: #EEE;
-  text-align: center;
 }
 
 .monthly-pay {
