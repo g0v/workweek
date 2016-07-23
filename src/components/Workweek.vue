@@ -24,7 +24,6 @@
           <li>基於以上假設，在計算輪班制度時（例如四班二輪）可能會與實際狀況有誤差</li>
           <li>下面的「額外工資」欄位包含加班費與例假日上班的工資加倍發給</li>
           <li>原有七天假期由於以前的雙週八十四小時工時，所以週休二日的勞工沒有休假，但應映現行法令改為單週工時四十小時，週休二日的勞工也應該要放這七天，詳情請見 <a target="_blank" href="https://youtu.be/4gd2m_73NHE?t=23m13s">有話好說節目的討論</a> 與 <a href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030002&FLNO=23" target="_blank">勞基法施行細則 23 條</a></li>
-          <li>粗估每年上班天數的算法是每年 365 天，假設為 52 週並且不包含例假日加班的天數，目前假設不會有公司每週都遇到天災、事變或突發事件或違法加班。</li>
         </ul>
       </span>
     </div>
@@ -59,11 +58,6 @@
           </li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
           <li class="pro">國定假日天數：19 天</li>
-          <li v-bind:class="{
-            'pro': currentSolution.overtimePay >= oneRestOneOffSolution.overtimePay &&
-                   currentSolution.overtimePay >= twoOffSolution.overtimePay}">
-            粗估每年上班天數： {{currentSolution.totalWorkdays}} 天
-          </li>
           <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
@@ -106,11 +100,6 @@
           </li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
           <li class="con">國定假日天數：12 天</li>
-          <li v-bind:class="{
-            'pro': oneRestOneOffSolution.totalWorkdays <= currentSolution.totalWorkdays &&
-                   oneRestOneOffSolution.totalWorkdays <= twoOffSolution.totalWorkdays}">
-            粗估每年上班天數： {{oneRestOneOffSolution.totalWorkdays}} 天
-          </li>
           <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
@@ -156,11 +145,6 @@
           </li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
           <li class="pro">國定假日天數：19 天</li>
-          <li v-bind:class="{
-            'pro': twoOffSolution.totalWorkdays <= currentSolution.totalWorkdays &&
-                   twoOffSolution.totalWorkdays <= oneRestOneOffSolution.totalWorkdays}">
-            粗估每年上班天數： {{twoOffSolution.totalWorkdays}} 天
-          </li>
           <!-- <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
           <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree"> -->
           <li v-if="(workhours[6] > 0 || workhours[5] > 0) && disaster" class="info">
