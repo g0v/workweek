@@ -40,10 +40,7 @@
         <ul>
           <li>週薪：{{regularPay}} 元</li>
           <li>加班時數：{{currentSolution.overtimeHoursTotal}}</li>
-          <li v-bind:class="{
-            'pro': currentSolution.overtimePay >= oneRestOneOffSolution.overtimePay &&
-                   currentSolution.overtimePay >= twoOffSolution.overtimePay &&
-                   (currentSolution.overtimePay !== twoOffSolution.overtimePay && currentSolution.overtimePay !== oneRestOneOffSolution.overtimePay)}">
+          <li v-bind:class="{ 'pro': mostOvertimePay.current }">
             額外工資：{{currentSolution.overtimePay.toFixed(2)}} 元
           </li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
@@ -66,10 +63,7 @@
         <ul>
           <li>週薪：{{regularPay}} 元</li>
           <li>加班時數：{{oneRestOneOffSolution.overtimeHoursTotal}}</li>
-          <li v-bind:class="{
-            'pro': oneRestOneOffSolution.overtimePay >= currentSolution.overtimePay &&
-                   oneRestOneOffSolution.overtimePay >= twoOffSolution.overtimePay &&
-                   (currentSolution.overtimePay !== twoOffSolution.overtimePay && currentSolution.overtimePay !== oneRestOneOffSolution.overtimePay)}">
+          <li v-bind:class="{ 'pro': mostOvertimePay.oneRestOneOff }">
             額外工資：{{oneRestOneOffSolution.overtimePay.toFixed(2)}} 元
           </li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
@@ -95,10 +89,7 @@
         <ul>
           <li>週薪：{{regularPay}} 元</li>
           <li>加班時數：{{twoOffSolution.overtimeHoursTotal}}</li>
-          <li v-bind:class="{
-            'pro': twoOffSolution.overtimePay >= currentSolution.overtimePay &&
-                   twoOffSolution.overtimePay >= oneRestOneOffSolution.overtimePay &&
-                   (currentSolution.overtimePay !== twoOffSolution.overtimePay && currentSolution.overtimePay !== oneRestOneOffSolution.overtimePay)}">
+          <li v-bind:class="{ 'pro': mostOvertimePay.twoOff }">
             額外工資：{{twoOffSolution.overtimePay.toFixed(2)}} 元
           </li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
@@ -238,6 +229,18 @@ export default {
     twoOffTotalWorkHours: function () {
       return this.workhours.reduce((a, b, index) =>
               (parseFloat(a) || 0) + (((index < 5 || this.laborAgree) && parseFloat(b)) || 0));
+    },
+    mostOvertimePay () {
+      let overtimePays = [ this.currentSolution.overtimePay,
+                           this.oneRestOneOffSolution.overtimePay,
+                           this.twoOffSolution.overtimePay ];
+      let max = Math.max(...overtimePays);
+      console.log('max', max);
+      return {
+        current: this.currentSolution.overtimePay === max,
+        oneRestOneOff: this.oneRestOneOffSolution.overtimePay === max,
+        twoOff: this.twoOffSolution.overtimePay === max
+      };
     }
   },
   watch: {
