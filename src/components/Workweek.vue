@@ -21,7 +21,10 @@
     </div>
     <h2>條件設定</h2>
     <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" number type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay.toFixed(2)}} 元。</p>
-    <offday-condition @reason-changed="reasonChanged"></offday-condition>
+    <offday-condition
+      :reason="regularDayOffWorkReason"
+      @reason-changed="reasonChanged">
+    </offday-condition>
     <div class="input">
       <label>週一 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[0]"></label>
       <label>週二 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[1]"></label>
@@ -50,23 +53,7 @@
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
         </ul>
-        <table class="week">
-          <th v-for="name in daynames">
-            {{ name }}
-          <th>
-          <tr v-for="hour in currentSolution.transposed">
-            <td v-for="day in hour" track-by="$index">
-              <span v-if="day !== 0" class="emoji" v-bind:class="{
-                'regular': day === 1,
-                'overtime': day === 2,
-                'overtime-two-hours': day === 3,
-                'work-on-dayoff': day === 4 || day === 5,
-                'off': day === 0
-              }"></span>
-              <span class="emoji" v-if="day === 0">--</span>
-            </td>
-          </tr>
-        </table>
+        <week-table :timetable="currentSolution.transposed"></week-table>
         <div v-show="expandDetail" class="alert alert-info">
           相關規定：
           <ul>
@@ -92,23 +79,7 @@
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
         </ul>
-        <table class="week">
-          <th v-for="name in daynames">
-            {{ name }}
-          <th>
-          <tr v-for="hour in oneRestOneOffSolution.transposed">
-            <td v-for="day in hour" track-by="$index">
-              <span v-if="day !== 0" class="emoji" v-bind:class="{
-                'regular': day === 1,
-                'overtime': day === 2,
-                'overtime-two-hours': day === 3,
-                'work-on-dayoff': day === 4 || day === 5,
-                'off': day === 0
-              }"></span>
-              <span class="emoji" v-if="day === 0">--</span>
-            </td>
-          </tr>
-        </table>
+        <week-table :timetable="oneRestOneOffSolution.transposed"></week-table>
         <div v-show="expandDetail" class="alert alert-info">
           相關規則：
           <ul>
@@ -141,23 +112,7 @@
             <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週六與週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
           </li>
         </ul>
-        <table class="week">
-          <th v-for="name in daynames">
-            {{ name }}
-          <th>
-          <tr v-for="hour in twoOffSolution.transposed">
-            <td v-for="day in hour" track-by="$index">
-              <span v-if="day !== 0" class="emoji" v-bind:class="{
-                'regular': day === 1,
-                'overtime': day === 2,
-                'overtime-two-hours': day === 3,
-                'work-on-dayoff': day === 4 || day === 5,
-                'off': day === 0
-              }"></span>
-              <span class="emoji" v-if="day === 0">--</span>
-            </td>
-          </tr>
-        </table>
+        <week-table :timetable="twoOffSolution.transposed"></week-table>
         <div v-show="expandDetail" class="alert alert-info">
           相關規則：
           <ul>
@@ -172,6 +127,7 @@
 <script>
 import * as solutions from '../lib/solutions';
 import OffdayCondition from './OffdayCondition';
+import WeekTable from './WeekTable';
 
 function normalize (workhours) {
   let hours = workhours.slice().map(h => {
@@ -187,7 +143,7 @@ function normalize (workhours) {
 }
 
 export default {
-  components: { OffdayCondition },
+  components: { OffdayCondition, WeekTable },
   methods: {
     toggleExpanding: function (evt) {
       this.expandDetail = !this.expandDetail;
@@ -300,14 +256,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-table.week {
-  width: 100%;
-}
-
-table.week td, table.week th {
-  text-align: center;
-}
-
 .warning {
   color: red;
   font-weight: bold;
@@ -327,31 +275,7 @@ table.week td, table.week th {
   text-decoration: underline;
 }
 
-.emoji {
-  width: 25px;
-  height: 25px;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  display: block;
-  margin: auto;
-}
 
-.emoji.regular {
-  background-image: url('../assets/regular.png');
-}
-
-.emoji.overtime {
-  background-image: url('../assets/overtime.png');
-}
-
-.emoji.overtime-two-hours {
-  background-image: url('../assets/overtime-two-hours.png');
-}
-
-.emoji.work-on-dayoff {
-  background-image: url('../assets/dayoff.png');
-}
 
 .monthly-pay {
   width: 80px;
