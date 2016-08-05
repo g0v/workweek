@@ -22,7 +22,7 @@
     <h2>條件設定</h2>
     <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" number type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay.toFixed(2)}} 元。</p>
     <offday-condition
-      :reason="regularDayOffWorkReason"
+      :reason="reason"
       @reason-changed="reasonChanged">
     </offday-condition>
     <div class="input">
@@ -142,7 +142,7 @@ export default {
 
     hash: function () {
       let params = {
-        regularDayOffWorkReason: this.regularDayOffWorkReason,
+        reason: this.reason,
         workhours: this.workhours.join(','),
         monthlyPay: this.monthlyPay
       };
@@ -154,7 +154,7 @@ export default {
     },
 
     reasonChanged (reason) {
-      this.regularDayOffWorkReason = reason;
+      this.reason = reason;
     }
   },
 
@@ -164,13 +164,16 @@ export default {
                     ? params.workhours.split(',').map(h => parseInt(h))
                     : [8, 8, 8, 8, 8, 4, 0];
     let monthlyPay = 36000;
-    let regularDayOffWorkReason = 'disaster';
+    let reason = 'disaster';
+    if (params.regularDayOffWorkReason) {
+      params.reason = params.regularDayOffWorkReason;
+    }
 
-    if (params.regularDayOffWorkReason &&
-       ((params.regularDayOffWorkReason === 'laborAgree' ||
-         params.regularDayOffWorkReason === 'laborDisagree' ||
-         params.regularDayOffWorkReason === 'disaster'))) {
-      regularDayOffWorkReason = params.regularDayOffWorkReason;
+    if (params.reason &&
+       ((params.reason === 'laborAgree' ||
+         params.reason === 'laborDisagree' ||
+         params.reason === 'disaster'))) {
+      reason = params.reason;
     }
 
     if (params.monthlyPay) {
@@ -178,7 +181,7 @@ export default {
     }
 
     return {
-      regularDayOffWorkReason: regularDayOffWorkReason,
+      reason: reason,
       daynames: solutions.DAY_NAMES,
       workhours: workhours,
       assumingWorkHours: 240,
@@ -189,10 +192,10 @@ export default {
   },
   computed: {
     disaster: function () {
-      return this.regularDayOffWorkReason === 'disaster';
+      return this.reason === 'disaster';
     },
     laborAgree: function () {
-      return !(this.regularDayOffWorkReason === 'laborDisagree');
+      return !(this.reason === 'laborDisagree');
     },
     hourlyPay: function () {
       return parseFloat(this.monthlyPay / this.assumingWorkHours);
@@ -205,14 +208,14 @@ export default {
       if (!this.laborAgree) {
         workhours[6] = 0;
       }
-      return solutions.current(workhours, this.hourlyPay, this.regularDayOffWorkReason);
+      return solutions.current(workhours, this.hourlyPay, this.reason);
     },
     oneRestOneOffSolution: function () {
       let workhours = normalize(this.workhours);
       if (!this.laborAgree) {
         workhours[6] = 0;
       }
-      return solutions.oneRestOneOff(workhours, this.hourlyPay, this.regularDayOffWorkReason);
+      return solutions.oneRestOneOff(workhours, this.hourlyPay, this.reason);
     },
     twoOffSolution: function () {
       let workhours = normalize(this.workhours);
@@ -220,7 +223,7 @@ export default {
         workhours[5] = 0;
         workhours[6] = 0;
       }
-      return solutions.twoOff(workhours, this.hourlyPay, this.regularDayOffWorkReason);
+      return solutions.twoOff(workhours, this.hourlyPay, this.reason);
     },
     oneOffTotalWorkHours: function () {
       return this.workhours.reduce((a, b, index) =>
@@ -244,7 +247,7 @@ export default {
     }
   },
   watch: {
-    'regularDayOffWorkReason': function (val) {
+    'reason': function (val) {
       this.hash();
     },
     'workhours': function (val) {
