@@ -21,12 +21,7 @@
     </div>
     <h2>條件設定</h2>
     <p>假設勞工採月薪制，其月薪 <input class="monthly-pay" number type="number" v-model="monthlyPay"> 元，每月總工時為 {{assumingWorkHours}} 計算，平均時薪為 {{hourlyPay.toFixed(2)}} 元。</p>
-    <p class="dayoff-options">
-      例假日工作條件設定：<br>
-      <label><input type="radio" value="disaster" v-model="regularDayOffWorkReason"> 發生天災、事變或突發事件，雇主停止休假要求勞工出勤</label><br>
-      <label><input type="radio" value="laborAgree" v-model="regularDayOffWorkReason"> <span class="strong">沒有</span>發生上述事件，但雇主要求上班，且勞工同意於例假日出勤</label><br>
-      <label><input type="radio" value="laborDisagree" v-model="regularDayOffWorkReason"> <span class="strong">沒有</span>發生上述事件，但雇主要求上班，而勞工拒絕於例假日出勤</label>
-    </p>
+    <offday-condition @reason-changed="reasonChanged"></offday-condition>
     <div class="input">
       <label>週一 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[0]"></label>
       <label>週二 <input debounce="100" number type="number" min="0" max="24" class="workhours" v-model="workhours[1]"></label>
@@ -176,6 +171,7 @@
 
 <script>
 import * as solutions from '../lib/solutions';
+import OffdayCondition from './OffdayCondition';
 
 function normalize (workhours) {
   let hours = workhours.slice().map(h => {
@@ -191,6 +187,7 @@ function normalize (workhours) {
 }
 
 export default {
+  components: { OffdayCondition },
   methods: {
     toggleExpanding: function (evt) {
       this.expandDetail = !this.expandDetail;
@@ -207,6 +204,10 @@ export default {
         name: 'workweek',
         query: params
       });
+    },
+
+    reasonChanged (reason) {
+      this.regularDayOffWorkReason = reason;
     }
   },
 
@@ -362,20 +363,10 @@ table.week td, table.week th {
   text-align: center;
 }
 
-input.workhours {
+.workhours {
   width: 50px;
   text-align: center;
   margin-right: 20px;
-}
-
-.dayoff-options label {
-  text-indent: 20px;
-  font-weight: normal;
-}
-
-.strong {
-  color: red;
-  font-weight: bold;
 }
 
 .pro {
