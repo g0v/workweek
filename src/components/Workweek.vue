@@ -45,9 +45,11 @@
           </li>
           <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
           <li class="pro">國定假日天數：19 天</li>
-          <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
-          <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
-            <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
+          <li  class="info" v-if="currentSolution.extraDayoff > 0">
+            額外補休時數：{{currentSolution.extraDayoff}} 日
+          </li>
+          <li class="warning" v-show="currentSolution.illegal">
+            {{{currentSolution.illegalReason}}}
           </li>
         </ul>
         <week-table :timetable="currentSolution.transposed"></week-table>
@@ -68,9 +70,9 @@
           </li>
           <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
           <li class="con">國定假日天數：12 天</li>
-          <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
-          <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree">
-            <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
+          <li v-if="oneRestOneOffSolution.extraDayoff > 0" class="info">額外補休時數：{{oneRestOneOffSolution.extraDayoff}} 日</li>
+          <li class="warning" v-show="oneRestOneOffSolution.illegal">
+            {{{currentSolution.illegalReason}}}
           </li>
         </ul>
         <week-table :timetable="oneRestOneOffSolution.transposed"></week-table>
@@ -94,13 +96,11 @@
           </li>
           <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
           <li class="pro">國定假日天數：19 天</li>
-          <!-- <li v-if="workhours[6] > 0 && disaster" class="info">額外補休時數：1 日</li>
-          <li class="warning" v-show="workhours[6] > 0 && !disaster && laborAgree"> -->
-          <li v-if="(workhours[6] > 0 || workhours[5] > 0) && disaster" class="info">
-            額外補休時數：{{ (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0) }} 日
+          <li v-if="twoOffSolution.extraDayoff > 0" class="info">
+            額外補休時數：{{ twoOffSolution.extraDayoff }} 日
           </li>
-          <li class="warning" v-show="(workhours[6] > 0 || workhours[5] > 0) && !disaster && laborAgree">
-            <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、事變或突發事件禁止於 <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=36">例假日（週六與週日）</a> 工作， <a target="_blank" href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 萬以下罰鍰</a> 。
+          <li class="warning" v-show="twoOffSolution.illegal">
+            {{{twoOffSolution.illegalReason}}}
           </li>
         </ul>
         <week-table :timetable="twoOffSolution.transposed"></week-table>
@@ -191,12 +191,6 @@ export default {
     };
   },
   computed: {
-    disaster: function () {
-      return this.reason === 'disaster';
-    },
-    laborAgree: function () {
-      return !(this.reason === 'laborDisagree');
-    },
     hourlyPay: function () {
       return parseFloat(this.monthlyPay / this.assumingWorkHours);
     },
@@ -261,7 +255,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .warning {
   color: red;
   font-weight: bold;
@@ -280,8 +274,6 @@ export default {
 .alert a {
   text-decoration: underline;
 }
-
-
 
 .monthly-pay {
   width: 80px;

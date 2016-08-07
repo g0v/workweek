@@ -17,6 +17,25 @@ function current (workhours, hourlyPay, reason) {
   let overtimeHoursTotal = 0;
   let pay = 0;
   let holiday = 19;
+  let extraDayoff = 0;
+  let illegal = false;
+  let illegalReason;
+
+  if (workhours[6] > 0 && reason === 'disaster') {
+    extraDayoff = 1;
+  }
+
+  if (workhours[6] > 0 && reason === 'laborAgree') {
+    illegal = true;
+    illegalReason = '<a target="_blank" href="http://law.moj.gov.tw/LawClass/' +
+                    'LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、' +
+                    '事變或突發事件禁止於 <a target="_blank" ' +
+                    'href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?' +
+                    'Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， ' +
+                    '<a target="_blank" href="http://law.moj.gov.tw/LawClass/' +
+                    'LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 ' +
+                    '萬以下罰鍰</a> 。';
+  }
 
   workhours.forEach((workhour, dayOfWeek) => {
     let workday = Array.apply(null, Array(12)).map((val, i) => {
@@ -132,7 +151,10 @@ function current (workhours, hourlyPay, reason) {
     transposed: transposed,
     overtimePay: parseFloat(pay),
     overtimeHoursTotal: overtimeHoursTotal,
-    totalWorkdays: 365 - holiday - dayoff * TOTAL_WEEK_PER_YEAR
+    totalWorkdays: 365 - holiday - dayoff * TOTAL_WEEK_PER_YEAR,
+    extraDayoff: extraDayoff,
+    illegal: illegal,
+    illegalReason: illegalReason
   };
 }
 
@@ -143,6 +165,25 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
   let overtimeHoursTotal = 0;
   let pay = 0;
   let holiday = 12;
+  let extraDayoff = 0;
+  let illegal = false;
+  let illegalReason;
+
+  if (workhours[6] > 0 && reason === 'disaster') {
+    extraDayoff = 1;
+  }
+
+  if (workhours[6] > 0 && reason === 'laborAgree') {
+    illegal = true;
+    illegalReason = '<a target="_blank" href="http://law.moj.gov.tw/LawClass/' +
+                    'LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、' +
+                    '事變或突發事件禁止於 <a target="_blank" ' +
+                    'href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?' +
+                    'Pcode=N0030001&FLNO=36">例假日（週日）</a> 工作， ' +
+                    '<a target="_blank" href="http://law.moj.gov.tw/LawClass/' +
+                    'LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 ' +
+                    '萬以下罰鍰</a> 。';
+  }
 
   workhours.forEach((workhour, dayOfWeek) => {
     let workday = Array.apply(null, Array(12)).map((val, i) => {
@@ -256,7 +297,10 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
     transposed: transposed,
     overtimePay: parseFloat(pay),
     overtimeHoursTotal: overtimeHoursTotal,
-    totalWorkdays: 365 - holiday - dayoff * TOTAL_WEEK_PER_YEAR
+    totalWorkdays: 365 - holiday - dayoff * TOTAL_WEEK_PER_YEAR,
+    extraDayoff: extraDayoff,
+    illegal: illegal,
+    illegalReason: illegalReason
   };
 }
 
@@ -267,6 +311,25 @@ function twoOff (workhours, hourlyPay, reason) {
   let overtimeHoursTotal = 0;
   let pay = 0;
   let holiday = 19;
+  let extraDayoff = 0;
+  let illegal = false;
+  let illegalReason;
+
+  if ((workhours[6] > 0 || workhours[5] > 0) && reason === 'disaster') {
+    extraDayoff = (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0);
+  }
+
+  if ((workhours[6] > 0 || workhours[5] > 0) && reason === 'laborAgree') {
+    illegal = true;
+    illegalReason = '<a target="_blank" href="http://law.moj.gov.tw/LawClass/' +
+                    'LawSingle.aspx?Pcode=N0030001&FLNO=40">違法</a>：非天災、' +
+                    '事變或突發事件禁止於 <a target="_blank" ' +
+                    'href="http://law.moj.gov.tw/LawClass/LawSingle.aspx?' +
+                    'Pcode=N0030001&FLNO=36">例假日（週日與週六）</a> 工作， ' +
+                    '<a target="_blank" href="http://law.moj.gov.tw/LawClass/' +
+                    'LawSingle.aspx?Pcode=N0030001&FLNO=79">違者處 2 萬以上 30 ' +
+                    '萬以下罰鍰</a> 。';
+  }
 
   workhours.forEach((workhour, dayOfWeek) => {
     let workday = Array.apply(null, Array(12)).map((val, i) => {
@@ -357,7 +420,10 @@ function twoOff (workhours, hourlyPay, reason) {
     transposed: transposed,
     overtimePay: parseFloat(pay),
     overtimeHoursTotal: overtimeHoursTotal,
-    totalWorkdays: 365 - holiday - dayoff * TOTAL_WEEK_PER_YEAR
+    totalWorkdays: 365 - holiday - dayoff * TOTAL_WEEK_PER_YEAR,
+    extraDayoff: extraDayoff,
+    illegal: illegal,
+    illegalReason: illegalReason
   };
 }
 
