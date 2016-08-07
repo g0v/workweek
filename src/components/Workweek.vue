@@ -120,19 +120,6 @@ import * as solutions from '../lib/solutions';
 import OffdayCondition from './OffdayCondition';
 import WeekTable from './WeekTable';
 
-function normalize (workhours) {
-  let hours = workhours.slice().map(h => {
-    h = parseFloat(h);
-    if (isNaN(h)) {
-      h = 0;
-    }
-    h = Math.min(24, h);
-    h = Math.max(0, h);
-    return h;
-  });
-  return hours;
-}
-
 export default {
   components: { OffdayCondition, WeekTable },
   methods: {
@@ -198,26 +185,13 @@ export default {
       return this.hourlyPay * 8 * 7;
     },
     currentSolution: function () {
-      let workhours = normalize(this.workhours);
-      if (!this.laborAgree) {
-        workhours[6] = 0;
-      }
-      return solutions.current(workhours, this.hourlyPay, this.reason);
+      return solutions.current(this.workhours, this.hourlyPay, this.reason);
     },
     oneRestOneOffSolution: function () {
-      let workhours = normalize(this.workhours);
-      if (!this.laborAgree) {
-        workhours[6] = 0;
-      }
-      return solutions.oneRestOneOff(workhours, this.hourlyPay, this.reason);
+      return solutions.oneRestOneOff(this.workhours, this.hourlyPay, this.reason);
     },
     twoOffSolution: function () {
-      let workhours = normalize(this.workhours);
-      if (!this.laborAgree) {
-        workhours[5] = 0;
-        workhours[6] = 0;
-      }
-      return solutions.twoOff(workhours, this.hourlyPay, this.reason);
+      return solutions.twoOff(this.workhours, this.hourlyPay, this.reason);
     },
     oneOffTotalWorkHours: function () {
       return this.workhours.reduce((a, b, index) =>

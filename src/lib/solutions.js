@@ -10,6 +10,19 @@ const STATE = {
   DAYOFF_ILLEGAL_WORK: 5
 };
 
+function normalize (workhours) {
+  let hours = workhours.slice().map(h => {
+    h = parseFloat(h);
+    if (isNaN(h)) {
+      h = 0;
+    }
+    h = Math.min(24, h);
+    h = Math.max(0, h);
+    return h;
+  });
+  return hours;
+}
+
 function current (workhours, hourlyPay, reason) {
   let workingMatrix = [];
   let total = 0;
@@ -20,6 +33,11 @@ function current (workhours, hourlyPay, reason) {
   let extraDayoff = 0;
   let illegal = false;
   let illegalReason;
+
+  workhours = normalize(workhours);
+  if (reason === 'laborDisagree') {
+    workhours[6] = 0;
+  }
 
   if (workhours[6] > 0 && reason === 'disaster') {
     extraDayoff = 1;
@@ -169,6 +187,11 @@ function oneRestOneOff (workhours, hourlyPay, reason) {
   let illegal = false;
   let illegalReason;
 
+  workhours = normalize(workhours);
+  if (reason === 'laborDisagree') {
+    workhours[6] = 0;
+  }
+
   if (workhours[6] > 0 && reason === 'disaster') {
     extraDayoff = 1;
   }
@@ -314,6 +337,12 @@ function twoOff (workhours, hourlyPay, reason) {
   let extraDayoff = 0;
   let illegal = false;
   let illegalReason;
+
+  workhours = normalize(workhours);
+  if (reason === 'laborDisagree') {
+    workhours[5] = 0;
+    workhours[6] = 0;
+  }
 
   if ((workhours[6] > 0 || workhours[5] > 0) && reason === 'disaster') {
     extraDayoff = (workhours[6] > 0 ? 1 : 0) + (workhours[5] > 0 ? 1 : 0);
