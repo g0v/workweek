@@ -36,80 +36,28 @@
     </div>
     <div class="row">
       <div class="col-md-4">
-        <h3>勞基法現行版本</h3>
-        <ul>
-          <li>週薪：{{regularPay}} 元</li>
-          <li>加班時數：{{currentSolution.overtimeHoursTotal}}</li>
-          <li v-bind:class="{ 'pro': mostOvertimePay.current }">
-            額外工資：{{currentSolution.overtimePay.toFixed(2)}} 元
-          </li>
-          <li>總計週薪：{{regularPay + currentSolution.overtimePay}} 元</li>
-          <li class="pro">國定假日天數：19 天</li>
-          <li  class="info" v-if="currentSolution.extraDayoff > 0">
-            額外補休時數：{{currentSolution.extraDayoff}} 日
-          </li>
-          <li class="warning" v-show="currentSolution.illegal">
-            {{{currentSolution.illegalReason}}}
-          </li>
-        </ul>
-        <week-table :timetable="currentSolution.transposed"></week-table>
-        <div v-show="expandDetail" class="alert alert-info">
-          相關規定：
-          <ul>
-            <li>台(87)勞動二字第39675號函：例假日（通常是週日）上班低於八個小時，薪水均為 {{hourlyPay}} x 8</li>
-          </ul>
-        </div>
+        <current-solution
+          :solution="currentSolution"
+          :regular-pay="regularPay"
+          :overtime-pay-winner="mostOvertimePay.current"
+          :expand="expandDetail">
+        </current-solution>
       </div>
       <div class="col-md-4">
-        <h3>勞動部草案一例一休版本</h3>
-        <ul>
-          <li>週薪：{{regularPay}} 元</li>
-          <li>加班時數：{{oneRestOneOffSolution.overtimeHoursTotal}}</li>
-          <li v-bind:class="{ 'pro': mostOvertimePay.oneRestOneOff }">
-            額外工資：{{oneRestOneOffSolution.overtimePay.toFixed(2)}} 元
-          </li>
-          <li>總計週薪：{{regularPay + oneRestOneOffSolution.overtimePay}} 元</li>
-          <li class="con">國定假日天數：12 天</li>
-          <li v-if="oneRestOneOffSolution.extraDayoff > 0" class="info">額外補休時數：{{oneRestOneOffSolution.extraDayoff}} 日</li>
-          <li class="warning" v-show="oneRestOneOffSolution.illegal">
-            {{{currentSolution.illegalReason}}}
-          </li>
-        </ul>
-        <week-table :timetable="oneRestOneOffSolution.transposed"></week-table>
-        <div v-show="expandDetail" class="alert alert-info">
-          相關規則：
-          <ul>
-            <li>
-              根據 <a href="http://www.cna.com.tw/news/firstnews/201606290106-1.aspx" target="_blank">報導</a>，休息日工資計算的部分，擬從原本的加倍發給，改為在2小時以內者，按平日工資額另給予每小時1又1/3，再繼續工作者另給予每小時1又2/3。
-            </li>
-            <li>工作時間計算方式為工作4小時以內，以4小時計算，超過4小時至8小時，以8小時計算，超過8小時至12小時以內者，以12小時計。</li>
-          </ul>
-        </div>
+        <one-rest-one-off-solution
+          :solution="oneRestOneOffSolution"
+          :regular-pay="regularPay"
+          :overtime-pay-winner="mostOvertimePay.oneRestOneOff"
+          :expand="expandDetail">
+        </one-rest-one-off-solution>
       </div>
       <div class="col-md-4">
-        <h3>一週兩例假日版本</h3>
-        <ul>
-          <li>週薪：{{regularPay}} 元</li>
-          <li>加班時數：{{twoOffSolution.overtimeHoursTotal}}</li>
-          <li v-bind:class="{ 'pro': mostOvertimePay.twoOff }">
-            額外工資：{{twoOffSolution.overtimePay.toFixed(2)}} 元
-          </li>
-          <li>總計週薪：{{regularPay + twoOffSolution.overtimePay}} 元</li>
-          <li class="pro">國定假日天數：19 天</li>
-          <li v-if="twoOffSolution.extraDayoff > 0" class="info">
-            額外補休時數：{{ twoOffSolution.extraDayoff }} 日
-          </li>
-          <li class="warning" v-show="twoOffSolution.illegal">
-            {{{twoOffSolution.illegalReason}}}
-          </li>
-        </ul>
-        <week-table :timetable="twoOffSolution.transposed"></week-table>
-        <div v-show="expandDetail" class="alert alert-info">
-          相關規則：
-          <ul>
-            <li>國民黨版在立法說明提到比照公務員，兩例有可能實質變兩休，但目前草案並沒有這個效果，還要觀察是否有後續動作</li>
-          </ul>
-        </div>
+        <two-off-solution
+          :solution="twoOffSolution"
+          :regular-pay="regularPay"
+          :overtime-pay-winner="mostOvertimePay.twoOff"
+          :expand="expandDetail">
+        </two-off-solution>
       </div>
     </div>
   </div>
@@ -118,10 +66,17 @@
 <script>
 import * as solutions from '../lib/solutions';
 import OffdayCondition from './OffdayCondition';
-import WeekTable from './WeekTable';
+import CurrentSolution from './CurrentSolution';
+import OneRestOneOffSolution from './OneRestOneOffSolution';
+import TwoOffSolution from './TwoOffSolution';
 
 export default {
-  components: { OffdayCondition, WeekTable },
+  components: {
+    OffdayCondition,
+    CurrentSolution,
+    OneRestOneOffSolution,
+    TwoOffSolution
+  },
   methods: {
     toggleExpanding: function (evt) {
       this.expandDetail = !this.expandDetail;
@@ -193,20 +148,11 @@ export default {
     twoOffSolution: function () {
       return solutions.twoOff(this.workhours, this.hourlyPay, this.reason);
     },
-    oneOffTotalWorkHours: function () {
-      return this.workhours.reduce((a, b, index) =>
-              (parseFloat(a) || 0) + (((index < 6 || this.laborAgree) && parseFloat(b)) || 0));
-    },
-    twoOffTotalWorkHours: function () {
-      return this.workhours.reduce((a, b, index) =>
-              (parseFloat(a) || 0) + (((index < 5 || this.laborAgree) && parseFloat(b)) || 0));
-    },
     mostOvertimePay () {
       let overtimePays = [ this.currentSolution.overtimePay,
                            this.oneRestOneOffSolution.overtimePay,
                            this.twoOffSolution.overtimePay ];
       let max = Math.max(...overtimePays);
-      console.log('max', max);
       return {
         current: this.currentSolution.overtimePay === max,
         oneRestOneOff: this.oneRestOneOffSolution.overtimePay === max,
