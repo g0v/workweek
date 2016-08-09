@@ -78,11 +78,11 @@ export default {
     TwoOffSolution
   },
   methods: {
-    toggleExpanding: function (evt) {
+    toggleExpanding (evt) {
       this.expandDetail = !this.expandDetail;
     },
 
-    hash: function () {
+    hash () {
       let params = {
         reason: this.reason,
         workhours: this.workhours.join(','),
@@ -133,19 +133,19 @@ export default {
     };
   },
   computed: {
-    hourlyPay: function () {
+    hourlyPay () {
       return parseFloat(this.monthlyPay / this.assumingWorkHours);
     },
-    regularPay: function () {
+    regularPay () {
       return this.hourlyPay * 8 * 7;
     },
-    currentSolution: function () {
+    currentSolution () {
       return solutions.current(this.workhours, this.hourlyPay, this.reason);
     },
-    oneRestOneOffSolution: function () {
+    oneRestOneOffSolution () {
       return solutions.oneRestOneOff(this.workhours, this.hourlyPay, this.reason);
     },
-    twoOffSolution: function () {
+    twoOffSolution () {
       return solutions.twoOff(this.workhours, this.hourlyPay, this.reason);
     },
     mostOvertimePay () {
@@ -161,13 +161,13 @@ export default {
     }
   },
   watch: {
-    'reason': function (val) {
+    reason (val) {
       this.hash();
     },
-    'workhours': function (val) {
+    workhours (val) {
       this.hash();
     },
-    'monthlyPay': function (val) {
+    monthlyPay (val) {
       this.hash();
     }
   }
